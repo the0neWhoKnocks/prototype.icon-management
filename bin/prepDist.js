@@ -18,7 +18,7 @@ const {
 
 if( existsSync(DIST) ) {
   // clean existing files (in the case when the directory already existed)
-  rimraf.sync(`${ DIST }/{cjs,public}/**/*`);
+  rimraf.sync(`${ DIST }/{cjs,public}`);
   console.log(`\nRemoved pre-existing items in "${ DIST }"`);
 }
 
