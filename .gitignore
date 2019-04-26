@@ -1,0 +1,9 @@
+# directories
+cjs
+dist
+esm
+node_modules
+
+# files
+*.log
+.DS_Store
