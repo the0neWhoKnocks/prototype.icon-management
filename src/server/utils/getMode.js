@@ -1,0 +1,1 @@
+export default () => process.env.MODE === 'production' ? 'prod' : 'dev';
