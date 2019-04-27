@@ -14,7 +14,7 @@
     "build:app": "cross-env MODE=production webpack",
     "build:dist": "node ./bin/prepDist && node ./bin/buildIconsManifest && npm run transpile && npm run sync:css",
     "start": "npm run build:dist && cross-env NODE_ENV=production npm run start:server",
-    "start:dev": "npm run build:dist && cross-env DEBUG=true PORT=$npm_package_ports_dev concurrently --kill-others -p {name} -n BABEL,WEBPACK,SERVER,CSS -c black.bgGreen,black.bgCyan,black.bgMagenta,black.bgMagenta \"npm run watch:transpile\" \"npm run watch:app\" \"npm run watch:server\" \"npm run sync:css -- -w -v -u\"",
+    "start:dev": "npm run build:dist && cross-env DEBUG=true PORT=$npm_package_ports_dev concurrently --kill-others -p {name} -n CSS,BABEL,WEBPACK,SERVER -c black.bgMagenta,black.bgGreen,black.bgCyan,black.bgMagenta \"npm run sync:css -- -w -v -u\" \"npm run watch:transpile\" \"npm run watch:app\" \"npm run watch:server\"",
     "start:server": "node $npm_package_paths_babelOutput/server",
     "sync:css": "cpx \"src/server/views/**/*.css\" dist/cjs/server/views",
     "transpile": "babel $npm_package_paths_babelSource -d $npm_package_paths_babelOutput --verbose",

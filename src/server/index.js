@@ -1,3 +1,4 @@
+import color from 'cli-color';
 import http from 'http';
 import getPort from 'SERVER/utils/getPort';
 import jsonResp from 'SERVER/utils/jsonResp';
@@ -28,6 +29,20 @@ if( process.env.DEBUG ){
   );
 }
 
+const showIconURLs = () => {
+  const { readdirSync } = require('fs');
+  const { PUBLIC_ICONS } = require('ROOT/conf.app');
+  let iconURLs = [];
+  
+  readdirSync(PUBLIC_ICONS).forEach(version => {
+    if(!version.includes('manifest.json')){
+      iconURLs.push(color.blue(`http://localhost:${ port }/icons/${ version }`));
+    }
+  });
+  
+  console.log(`Icons:\n  ${ iconURLs.join('\n  ') }`);
+};
+
 http
   .createServer(requestHandler([
     ...inspectMiddleware,
@@ -38,5 +53,8 @@ http
   ]))
   .listen(port, (err) => {
     if(err) throw err;
-    console.log(`Server running at http://localhost:${ port }/`);
+    setTimeout(() => {
+      console.log(`Server running at ${ color.blue(`http://localhost:${ port }/`) }`);
+      showIconURLs();
+    }, 1000);
   });
