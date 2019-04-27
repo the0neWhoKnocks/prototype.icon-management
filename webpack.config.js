@@ -4,8 +4,8 @@ const WebpackAssetsManifest = require('webpack-assets-manifest');
 const SimpleProgressWebpackPlugin = require('simple-progress-webpack-plugin');
 const TidyPlugin = require('@noxx/webpack-tidy-plugin');
 const {
-  WP__ENTRY,
-  WP__OUTPUT,
+  DIST_JS,
+  SRC,
 } = require('./conf.app');
 
 const MODE = process.env.MODE;
@@ -20,7 +20,7 @@ const stats = {
 
 const conf = {
   entry: {
-    app: WP__ENTRY,
+    app: `${ SRC }/app.js`,
   },
   externals: {
     'react': 'React',
@@ -49,7 +49,7 @@ const conf = {
     },
   },
   output: {
-    path: WP__OUTPUT,
+    path: DIST_JS,
     // assigns the hashed name to the file
     filename: `[name]_[chunkhash:${ HASH_LENGTH }].js`,
     // Point sourcemap entries to original disk location (format as URL on Windows)

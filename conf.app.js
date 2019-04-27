@@ -33,9 +33,8 @@ module.exports = {
   PUBLIC_MANIFEST,
   PUBLIC_STATIC_FILE_CACHE: `${ ROOT }/cjs/server/.static-cache`,
   PUBLIC_VENDOR,
+  SRC,
   SRC_STATIC_ICONS: `${ SRC }/static/icons`,
-  WP__ENTRY: `${ SRC }/app.js`,
-  WP__OUTPUT: DIST_JS,
   aliases: {
     '@ORG': `${ SRC }/modules/@org`,
     ROOT,
