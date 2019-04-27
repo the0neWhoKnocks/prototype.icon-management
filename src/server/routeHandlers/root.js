@@ -30,8 +30,8 @@ export default ({ res }) => {
       ),
       scripts: {
         head: [
-          { path: `${ relativeVendor }/react.${ (isProd) ? 'production.min' : 'development' }.js` },
-          { path: `${ relativeVendor }/react-dom.${ (isProd) ? 'production.min' : 'development' }.js` },
+          { src: `${ relativeVendor }/react.${ (isProd) ? 'production.min' : 'development' }.js` },
+          { src: `${ relativeVendor }/react-dom.${ (isProd) ? 'production.min' : 'development' }.js` },
         ],
       },
       res,
