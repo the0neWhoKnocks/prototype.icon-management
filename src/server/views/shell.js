@@ -6,6 +6,7 @@ export default ({
   prod,
   rootContent,
   scripts,
+  styles,
   res,
   title,
 }) => {
@@ -20,9 +21,20 @@ export default ({
     ? bundleScripts.map((script) => `<script type="text/javascript" src="${ script }"></script>`).join('\n')
     : '';
   const headScripts = (scripts)
-    ? scripts.head.map(
-        (src) => `<script type="text/javascript" src="${ src }"></script>`
-      )
+    ? scripts.head.map(({ raw, src }) => {
+        return (src)
+          ? `<script type="text/javascript" src="${ src }"></script>`
+          : `<script type="text/javascript">//<![CDATA[
+              ${ raw }
+            //]]></script>`
+      })
+    : [];
+  const headStyles = (styles)
+    ? styles.map(({ link, style }) => {
+        return (style)
+          ? `<style>${ style }</style>`
+          : `<link rel="stylesheet" href="${ link }">`
+      })
     : [];
   const bs = (getMode() === 'dev')
     ? `
@@ -85,6 +97,7 @@ export default ({
           cursor: default;
         }
       </style>
+      ${ headStyles.join('\n') }
       ${ headScripts.join('\n') }
     </head>
     <body>

@@ -43,11 +43,13 @@ const checkServer = () => new Promise((rootResolve, rootReject) => {
 
 nodemon({
   delay: 500,
+  ext: 'css js',
   script: `${ DIST_SERVER }/index.js`,
   watch: [
     // WP bundled new code
     `${ DIST_JS }/manifest.json`,
     // The server has updated
+    `${ DIST_SERVER }/**/*.css`,
     `${ DIST_SERVER }/**/*.js`,
   ],
 })
@@ -64,11 +66,8 @@ nodemon({
       });
   });
 
-// TODO - proxy option doesn't work with firewall, add `proxy` and `snippetOptions`
-// only if env var is set.
-
 // https://www.browsersync.io/docs/options
-let bsOpts = {
+browserSync.init({
   ghostMode: false, // don't mirror interactions in other browsers
   // logLevel: 'debug',
   logLevel: 'silent',
@@ -77,23 +76,7 @@ let bsOpts = {
   ui: {
     port: port + 2,
   },
-};
-
-if(!process.env.DISABLE_BS_PROXY){
-  bsOpts = {
-    ...bsOpts,
-    proxy: `localhost:${ port }`,
-    snippetOptions: {
-      rule: {
-        match: /<\/body>/i,
-        fn: (snippet) => snippet,
-      },
-    },
-  };
-}
-
-browserSync.init(bsOpts);
-
+});
 
 function killWatcher(evType) {
   console.log(`${ LOG_PREFIX } Killing watcher (${ evType })`);
