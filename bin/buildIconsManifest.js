@@ -10,6 +10,8 @@ readdirSync(DIST_PUBLIC_ICONS).forEach(version => {
   const folder = `${DIST_PUBLIC_ICONS}/${version}`;
   const manifestFile = `${folder}/manifest.json`;
   
+  manifest._version = version;
+  
   // builds out manifest with updated version specific paths
   readdirSync(folder).forEach(svg => {
     const { base, name } = parse(`${folder}/${svg}`);

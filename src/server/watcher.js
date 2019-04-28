@@ -50,7 +50,10 @@ nodemon({
     `${ DIST_JS }/manifest.json`,
     // The server has updated
     `${ DIST_SERVER }/**/*.css`,
-    `${ DIST_SERVER }/**/*.js`,
+    `${ DIST }/cjs/**/*.js`,
+  ],
+  ignore: [
+    `${ DIST }/cjs/**/cache.js`,
   ],
 })
   .on('restart', () => {

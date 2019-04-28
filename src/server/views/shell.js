@@ -1,13 +1,14 @@
+import getPort from 'UTILS/getPort';
 import getMode from 'SERVER/utils/getMode';
-import getPort from 'SERVER/utils/getPort';
 
 export default ({
   bundleScripts,
   prod,
+  res,
   rootContent,
   scripts,
   styles,
-  res,
+  svgs,
   title,
 }) => {
   const noscriptMsg = (!rootContent)
@@ -41,6 +42,13 @@ export default ({
       <script id="__bs_script__">//<![CDATA[
         document.write("<script async src='http://HOST:${ getPort() + 1 }/browser-sync/browser-sync-client.js?v=2.26.5'><\\/script>".replace("HOST", location.hostname));
       //]]></script>
+    `
+    : '';
+  const _svgs = (svgs)
+    ? `
+      <svg style="display:none; position:absolute" width="0" height="0">
+        ${ Object.keys(svgs).map((name) => svgs[name].replace(/svg/g, `symbol id="org-icon_${name}"`)) }
+      </svg>
     `
     : '';
   
@@ -101,6 +109,7 @@ export default ({
       ${ headScripts.join('\n') }
     </head>
     <body>
+      ${ _svgs }
       ${ noscriptMsg }
       <div id="root">${ rootContent || '' }</div>
       ${ _bundleScripts }
