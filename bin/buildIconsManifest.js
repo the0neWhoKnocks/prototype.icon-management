@@ -1,9 +1,9 @@
 const { readdirSync, writeFileSync } = require('fs');
 const { parse } = require('path');
-const { ports } = require('../package.json');
+const getPort = require('../src/utils/getPort');
 const { DIST_PUBLIC_ICONS } = require('../conf.app');
 
-const BUCKET_URL = `http://localhost:${ports.dev}/icons`;
+const BUCKET_URL = `http://localhost:${ getPort() }/icons`;
 let manifest = {};
 
 readdirSync(DIST_PUBLIC_ICONS).forEach(version => {

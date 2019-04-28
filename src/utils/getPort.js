@@ -1,1 +1,1 @@
-export default () => +process.env.PORT || 3001;
+module.exports = () => +process.env.PORT || 3001;

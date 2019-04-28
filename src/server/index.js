@@ -8,6 +8,10 @@ import handleIcons from './routeHandlers/icons';
 import handleRootRequest from './routeHandlers/root';
 import handleStaticFile from './routeHandlers/static';
 
+process.on('unhandledRejection', (reason , p) => {
+  console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
+});
+
 const port = getPort();
 
 const inspectMiddleware = [];
