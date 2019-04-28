@@ -40,5 +40,6 @@ module.exports = {
     ROOT,
     SERVER: `${ SRC }/server`,
     SRC,
+    UTILS: `${ SRC }/utils`,
   },
 };

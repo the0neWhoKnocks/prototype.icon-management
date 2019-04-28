@@ -1,6 +1,6 @@
 import color from 'cli-color';
 import http from 'http';
-import getPort from 'SERVER/utils/getPort';
+import getPort from 'UTILS/getPort';
 import jsonResp from 'SERVER/utils/jsonResp';
 import requestHandler from 'SERVER/utils/requestHandler';
 import handleError from './routeHandlers/error';
@@ -47,8 +47,8 @@ http
   .createServer(requestHandler([
     ...inspectMiddleware,
     ['/', handleRootRequest],
-    [/\/icons(?:\/(v\d{1,3}\.\d{1,3}\.\d{1,3}))?\/?$/, handleIcons],
-    [/\.[a-z]{2,4}/, handleStaticFile],
+    [/\/icons(?:\/(v\d{1,3}\.\d{1,3}\.\d{1,3}))?\/?$/, handleIcons, null, false],
+    [/\.[a-z]{2,4}/, handleStaticFile, null, false],
     ['*', handleError, [404, 'Page Not Found']],
   ]))
   .listen(port, (err) => {
