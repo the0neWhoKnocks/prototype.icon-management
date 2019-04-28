@@ -6,6 +6,11 @@ const pascalCase = (str, del = ' ') => str
 export default ({ manifest }) => {
   const iconCards = Object.keys(manifest).map((icon) => {
     const src = manifest[icon];
+    
+    if(icon === '_version'){
+      return '';
+    }
+    
     return `
       <icon-card>
         <card>
