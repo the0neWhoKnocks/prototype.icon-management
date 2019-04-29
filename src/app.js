@@ -1,10 +1,10 @@
 import React, { Fragment } from 'react';
 import { render } from 'react-dom';
-import Icon from '@ORG/org-react-icon';
+import { Icon, IconLink } from '@ORG/org-react-icon';
 
 const Tag = ({ children, desc, icon, title }) => (
   <div className="tag">
-    <Icon name={icon} desc={desc} title={title} />
+    <IconLink name={icon} desc={desc} title={title} />
     <span className="tag-text">
       { children }
     </span>
@@ -81,6 +81,7 @@ const App = () => (
     `}</style>
     <div className="wrapper">
       <div className="message">
+        <Icon name="cake" title="cake" desc="A cake with a candle on top" />
         <Tag icon="mood" title="smiley face" desc="A smiling face">Happy</Tag>
         <Tag icon="cake" title="cake" desc="A cake with a candle on top">Birthday</Tag> to the
         <Tag icon="mood_bad" title="sad face" desc="A frowning face">Ground</Tag>!!!

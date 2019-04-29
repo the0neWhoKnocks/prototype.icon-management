@@ -35,6 +35,7 @@ export default (opts, cleanPath) => {
         const ext = parse(file).ext;
         // if the file is found, set Content-type and send data
         res.setHeader('Content-type', mimeTypes[ext] || 'text/plain');
+        res.setHeader('Access-Control-Allow-Origin', '*')
         res.end(data);
       }
     });

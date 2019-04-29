@@ -72,6 +72,14 @@ const conf = {
       writeToDisk: true,
     }),
     /**
+     * Makes some environment variables available to the JS code, for example:
+     * if (process.env.NODE_ENV === 'production') { ... }.
+     */
+    new webpack.DefinePlugin({
+      'process.env.ON_CLIENT': true,
+      'process.env.PORT': process.env.PORT,
+    }),
+    /**
      * Provides build progress in the CLI
      */
     new SimpleProgressWebpackPlugin({
