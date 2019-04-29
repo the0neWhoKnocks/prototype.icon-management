@@ -1,6 +1,8 @@
 import color from 'cli-color';
 import http from 'http';
+import { networkInterfaces } from 'os';
 import getPort from 'UTILS/getPort';
+import getEnv from 'SERVER/utils/getEnv';
 import jsonResp from 'SERVER/utils/jsonResp';
 import requestHandler from 'SERVER/utils/requestHandler';
 import handleError from './routeHandlers/error';
@@ -13,9 +15,10 @@ process.on('unhandledRejection', (reason , p) => {
 });
 
 const port = getPort();
+const env = getEnv();
 
 const inspectMiddleware = [];
-if( process.env.DEBUG ){
+if( env !== 'production' ){
   // https://nodejs.org/api/inspector.html
   const inspector = require('inspector');
   inspectMiddleware.push(
@@ -40,11 +43,32 @@ const showIconURLs = () => {
   
   readdirSync(PUBLIC_ICONS).forEach(version => {
     if(!version.includes('manifest.json')){
-      iconURLs.push(color.blue(`http://localhost:${ port }/icons/${ version }`));
+      iconURLs.push(color.cyan(`http://localhost:${ port }/icons/${ version }`));
     }
   });
   
   console.log(`Icons:\n  ${ iconURLs.join('\n  ') }`);
+};
+
+const getExternalIP = () => {
+  const ifaces = networkInterfaces();
+  let ip;
+  
+  Object.keys(ifaces).forEach((ifname) => {
+    ifaces[ifname].forEach((iface) => {
+      if (
+        iface.family === 'IPv4'
+        && iface.internal === false
+        // Use the first `en` (ethernet) interface. Sometimes wireless which
+        // should be `wl` shows up under `en`, so just roll with it :\
+        && /en\d+/i.test(ifname)
+      ) {
+        ip = iface.address;
+      }
+    });
+  });
+  
+  return ip;
 };
 
 http
@@ -58,7 +82,16 @@ http
   .listen(port, (err) => {
     if(err) throw err;
     setTimeout(() => {
-      console.log(`Server running at ${ color.blue(`http://localhost:${ port }/`) }`);
+      let msg =
+        'Server running at:'
+        + `\n  Internal: ${ color.cyan(`http://localhost:${ port }/`) }`
+        + `\n  External: ${ color.cyan(`http://${ getExternalIP() }:${ port }/`) }`;
+      
+      if(env !== 'production'){
+        msg += `\n  Watching: ${ color.cyan(`http://localhost:${ port + 1 }/`) }`;
+      }
+      
+      console.log(msg);
       showIconURLs();
     }, 1000);
   });
