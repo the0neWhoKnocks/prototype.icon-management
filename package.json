@@ -51,6 +51,7 @@
     "cross-env": "^5.2.0",
     "emotion": "^10.0.7",
     "fs-extra": "^7.0.1",
+    "html-react-parser": "^0.7.0",
     "nodemon": "^1.18.10",
     "prop-types": "^15.6.1",
     "react": "^16.3.2",
