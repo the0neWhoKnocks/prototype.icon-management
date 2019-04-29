@@ -52,17 +52,22 @@ const App = () => (
       .tag {
         color: #eee;
         border-radius: 1em 1.5em 0.5em 1em;
-        padding: 0 0.5em 0 0.1em;
+        padding: 0 0.5em 0 1.25em;
         margin: 0 0 0 0.1em;
         background: #333;
         display: inline-block;
+        position: relative;
       }
-      .tag .org-icon svg {
+      .tag svg.org-icon {
         color: #333;
         border-radius: 1em;
         padding: 0.1em;
         margin-right: 0.2em;
         background: #eee;
+        position: absolute;
+        top: 50%;
+        left: 2px;
+        transform: translateY(-50%);
       }
       
       .party-time {
@@ -70,7 +75,7 @@ const App = () => (
       }
       
       .party-time .tag .tag-text,
-      .party-time .tag .org-icon svg {
+      .party-time .tag .org-icon {
         ${ textAnim }
       }
     `}</style>
