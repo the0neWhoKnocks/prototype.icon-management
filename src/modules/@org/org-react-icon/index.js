@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import reactParser from 'html-react-parser';
 import { string } from 'prop-types';
-import { ICONS_URL } from '@ORG/org-icons';
+import { getIcon } from '@ORG/org-icons';
 import styles from './styles';
 
 const basePropTypes = {
@@ -9,6 +9,7 @@ const basePropTypes = {
   desc: string,
   name: string,
   title: string,
+  version: string,
 };
 const baseDefaultProps = {
   className: '',
@@ -32,13 +33,11 @@ class Icon extends Component {
   }
   
   componentDidMount() {
-    const { name } = this.props;
+    const { name, version } = this.props;
     
-    Icon.getManifest(`${ ICONS_URL }/manifest.json`)
-      .then((manifest) => Icon.getSVG(manifest[name]))
-      .then((svg) => {
-        this.setState({ svg });
-      });
+    getIcon({ icon: name, version }).then((svg) => {
+      this.setState({ svg });
+    });  
   }
   
   render() {
