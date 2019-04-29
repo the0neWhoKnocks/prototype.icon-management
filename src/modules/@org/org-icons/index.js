@@ -2,9 +2,25 @@ import getPort from 'UTILS/getPort';
 
 // NOTE - URL would be hardcoded, but it's dynamic for this example.
 const ICONS_URL = `http://localhost:${ getPort() }/icons`;
-module.exports.ICONS_URL = ICONS_URL;
 
-if(!process.env.ON_CLIENT){
+const manifestURL = (version = 'latest') => {
+  const v = (version !== 'latest') ? `/${ version }` : '';
+  return `${ ICONS_URL }${ v }/manifest.json`;
+};
+
+
+if(process.env.ON_CLIENT){
+  // NOTE - Using `fetch` for simplicity, would have to be polyfilled to account
+  // for older browsers.
+  const getManifest = (url) => window.fetch(url).then((resp) => resp.json());
+  const getSVG = (url) => window.fetch(url).then((resp) => resp.text());
+  
+  module.exports.getIcon = ({ icon, version = 'latest' }) => {
+    return getManifest( manifestURL(version) )
+      .then((manifest) => getSVG(manifest[icon]));
+  };
+}
+else {
   const { readFile, writeFile } = require('fs');
   const { resolve } = require('path');
   const { get } = require('request');
@@ -12,9 +28,7 @@ if(!process.env.ON_CLIENT){
   const CACHE_PATH = resolve(__dirname, './cache.js');
   
   const getManifest = ({ icons, version }) => new Promise((res, rej) => {
-    const manifestURL = `${ ICONS_URL }${ (version !== 'latest') ? `/${ version }` : '' }/manifest.json`;
-    
-    get({ url: manifestURL, json: true }, (err, resp, manifest) => {
+    get({ url: manifestURL(version), json: true }, (err, resp, manifest) => {
       if(err){
         rej({ message: err.message, status: 500 });
       }
