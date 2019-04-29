@@ -37,13 +37,6 @@ export default ({
           : `<link rel="stylesheet" href="${ link }">`
       })
     : [];
-  const bs = (getEnv() === 'dev')
-    ? `
-      <script id="__bs_script__">//<![CDATA[
-        document.write("<script async src='http://HOST:${ getPort() + 1 }/browser-sync/browser-sync-client.js?v=2.26.5'><\\/script>".replace("HOST", location.hostname));
-      //]]></script>
-    `
-    : '';
   const _svgs = (svgs)
     ? `
       <svg style="display:none; position:absolute" width="0" height="0">
@@ -113,7 +106,6 @@ export default ({
       ${ noscriptMsg }
       <div id="root">${ rootContent || '' }</div>
       ${ _bundleScripts }
-      ${ bs }
     </body>
     </html>
   `;

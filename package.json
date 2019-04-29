@@ -8,7 +8,7 @@
     "babelSource": "./src"
   },
   "ports": {
-    "dev": 9000
+    "dev": 4000
   },
   "scripts": {
     "build:app": "cross-env MODE=production webpack",

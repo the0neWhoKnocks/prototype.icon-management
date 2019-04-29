@@ -73,9 +73,15 @@ nodemon({
 browserSync.init({
   ghostMode: false, // don't mirror interactions in other browsers
   // logLevel: 'debug',
-  logLevel: 'silent',
   open: false,
   port: port + 1,
+  proxy: `localhost:${ port }`,
+  snippetOptions: {
+    rule: {
+      match: /<\/body>/i,
+      fn: (snippet) => snippet,
+    },
+  },
   ui: {
     port: port + 2,
   },
