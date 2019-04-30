@@ -141,6 +141,13 @@ else {
       })
       .catch(err => rej(err));
   });
+  
+  const iconsToSymbols = (svgs) => `
+    <svg style="display:none; position:absolute" width="0" height="0">
+      ${ Object.keys(svgs).map((name) => svgs[name].replace(/svg/g, `symbol id="org-icon_${name}"`)) }
+    </svg>
+  `;
 
-  module.exports = getIcons;
+  module.exports.getIcons = getIcons;
+  module.exports.iconsToSymbols = iconsToSymbols;
 }

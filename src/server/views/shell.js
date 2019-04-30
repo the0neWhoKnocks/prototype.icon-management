@@ -3,12 +3,12 @@ import getEnv from 'SERVER/utils/getEnv';
 
 export default ({
   bundleScripts,
+  icons,
   prod,
   res,
   rootContent,
   scripts,
   styles,
-  svgs,
   title,
 }) => {
   const noscriptMsg = (!rootContent)
@@ -37,13 +37,7 @@ export default ({
           : `<link rel="stylesheet" href="${ link }">`
       })
     : [];
-  const _svgs = (svgs)
-    ? `
-      <svg style="display:none; position:absolute" width="0" height="0">
-        ${ Object.keys(svgs).map((name) => svgs[name].replace(/svg/g, `symbol id="org-icon_${name}"`)) }
-      </svg>
-    `
-    : '';
+  const _icons = (icons) ? icons: '';
   
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
   
@@ -102,7 +96,7 @@ export default ({
       ${ headScripts.join('\n') }
     </head>
     <body>
-      ${ _svgs }
+      ${ _icons }
       ${ noscriptMsg }
       <div id="root">${ rootContent || '' }</div>
       ${ _bundleScripts }

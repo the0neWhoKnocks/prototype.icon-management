@@ -1,8 +1,3 @@
-const pascalCase = (str, del = ' ') => str
-  .split(del)
-  .map((word) => word.replace(/^\w/, c => c.toUpperCase()))
-  .join('');
-
 export default ({ manifest }) => {
   const iconCards = Object.keys(manifest).map((icon) => {
     const src = manifest[icon];
@@ -20,7 +15,7 @@ export default ({ manifest }) => {
           </icon-wrapper>
           <button
             name="usage"
-            data-exp="${ pascalCase(icon, '_') }"
+            data-name="${ icon }"
             data-src="${ src }"
           >Usage</button>
         </card>
