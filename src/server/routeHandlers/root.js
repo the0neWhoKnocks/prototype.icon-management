@@ -1,6 +1,6 @@
 import { readFile, readFileSync } from 'fs';
 import { resolve } from 'path';
-import orgIcons from '@ORG/org-icons';
+import { getIcons, iconsToSymbols } from '@ORG/org-icons';
 import {
   PUBLIC,
   PUBLIC_JS,
@@ -14,7 +14,7 @@ import handleError from './error';
 const isProd = getEnv() === 'prod';
 const relativeJS = PUBLIC_JS.replace(PUBLIC, '');
 const relativeVendor = PUBLIC_VENDOR.replace(PUBLIC, '');
-const iconsPromise = orgIcons({
+const iconsPromise = getIcons({
   icons: ['cake', 'mood', 'mood_bad'],
   version: 'v1.1.0',
 });
@@ -46,6 +46,7 @@ export default ({ res }) => {
           // bound to the correct DOM element.
           'https://www.youtube.com/iframe_api',
         ],
+        icons: iconsToSymbols(icons),
         res,
         scripts: {
           head: [
@@ -54,7 +55,6 @@ export default ({ res }) => {
             { raw: clientJS },
           ],
         },
-        svgs: icons,
         title: 'Root View',
       }));
     })

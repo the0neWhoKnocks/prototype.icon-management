@@ -58,11 +58,14 @@ icon-text {
 }
 
 tabs {
+  height: 100%;
   font-size: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 tabs-row,
-  tabs-content {
+tabs-content {
   display: block;
 }
 
@@ -79,6 +82,25 @@ tabs-content {
   padding: 1em;
   border: solid 1px #aaa;
   position: relative;
+  white-space: pre;
+  overflow: auto;
+}
+tabs-content p {
+  margin: 0 0 1rem;
+}
+tabs-content code {
+  overflow: auto;
+}
+tabs-content h4 {
+  margin: 1em 0;
+  border-bottom: solid 1px #aaa;
+}
+tabs-content ul {
+  font-size: 0;
+  margin-bottom: 1rem;
+}
+tabs-content li {
+  font-size: 1rem;
 }
 
 tab {
@@ -114,6 +136,11 @@ panel {
   left: 0;
   right: 0;
   pointer-events: none;
+}
+
+panel-content {
+  height: 100%;
+  display: block;
 }
 
 panel-body {
