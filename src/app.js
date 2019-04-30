@@ -79,9 +79,13 @@ const App = () => (
         ${ textAnim }
       }
     `}</style>
+    <canvas
+      id="canvas"
+      width="300"
+      height="300"
+    ></canvas>
     <div className="wrapper">
       <div className="message">
-        <Icon name="cake" title="cake" desc="A cake with a candle on top" />
         <Tag icon="mood" title="smiley face" desc="A smiling face">Happy</Tag>
         <Tag icon="cake" title="cake" desc="A cake with a candle on top">Birthday</Tag> to the
         <Tag icon="mood_bad" title="sad face" desc="A frowning face">Ground</Tag>!!!
