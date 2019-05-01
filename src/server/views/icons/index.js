@@ -1,10 +1,8 @@
 export default ({ manifest }) => {
   const iconCards = Object.keys(manifest).map((icon) => {
-    const src = manifest[icon];
+    if(icon === '_version') return '';
     
-    if(icon === '_version'){
-      return '';
-    }
+    const src = `./${ manifest[icon].split('/').slice(-1).pop() }`;
     
     return `
       <icon-card>
