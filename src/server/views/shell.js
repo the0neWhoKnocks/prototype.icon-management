@@ -39,7 +39,7 @@ export default ({
     : [];
   const _icons = (icons) ? icons: '';
   
-  res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  if(res) res.setHeader('Content-Type', 'text/html; charset=utf-8');
   
   return `
     <html>
