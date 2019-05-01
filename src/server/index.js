@@ -36,14 +36,14 @@ if( env === 'dev' ){
   );
 }
 
-const showIconURLs = () => {
+const showIconURLs = ({ suffix }) => {
   const { readdirSync } = require('fs');
   const { PUBLIC_ICONS } = require('ROOT/conf.app');
   let iconURLs = [];
   
   readdirSync(PUBLIC_ICONS).forEach(fileName => {
     if( !/(manifest\.json|index.html)$/.test(fileName) ){
-      iconURLs.push(color.cyan(`http://localhost:${ port }/icons/${ fileName }`));
+      iconURLs.push(color.cyan(`http://localhost:${ port }/icons/${ fileName }/${ suffix }`));
     }
   });
   
@@ -82,16 +82,17 @@ http
   .listen(port, (err) => {
     if(err) throw err;
     setTimeout(() => {
+      const suffix = (env === 'prod') ? 'index.html' : '';
       let msg =
         'Server running at:'
-        + `\n  Internal: ${ color.cyan(`http://localhost:${ port }/`) }`
-        + `\n  External: ${ color.cyan(`http://${ getExternalIP() }:${ port }/`) }`;
+        + `\n  Internal: ${ color.cyan(`http://localhost:${ port }/${ suffix }`) }`
+        + `\n  External: ${ color.cyan(`http://${ getExternalIP() }:${ port }/${ suffix }`) }`;
       
       if(env === 'dev'){
         msg += `\n  Watching: ${ color.cyan(`http://localhost:${ port + 1 }/`) }`;
       }
       
       console.log(msg);
-      showIconURLs();
+      showIconURLs({ suffix });
     }, 1000);
   });
