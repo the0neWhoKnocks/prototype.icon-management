@@ -81,6 +81,10 @@ npm i
 npm run start
 ```
 
+This will start up the server with all static assets built. To view how the
+assets will perform on a static server you'll want to append `/index.html` to
+the URLs that are presented. 
+
 ---
 
 ## Development
