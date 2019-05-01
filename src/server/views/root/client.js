@@ -29,7 +29,6 @@ function onYouTubeIframeAPIReady() {
   };
   
   const disableParty = () => {
-    clearInterval(timeCheck);
     partying = false;
     document.body.classList.remove('party-time');
     pS.stop();
@@ -38,10 +37,20 @@ function onYouTubeIframeAPIReady() {
   const handleTimeChange = () => {
     const time = player.getCurrentTime();
     
-    if(time >= 99.5){
-      if(!partying) enableParty();
-      else if(time >= 108) disableParty();
-    }
+    if(
+      !partying
+      && (time > 99.5 && time < 108)
+      || (time > 115 && time < 118)
+      || (time > 123 && time < 130)
+      || (time > 153 && time < 156)
+    ) enableParty();
+    else if(
+      partying
+      && (time > 108 && time < 115)
+      || (time > 118 && time < 120)
+      || (time > 130 && time < 153)
+      || (time > 156)
+    ) disableParty();
   };
   
   const player = new YT.Player('player', {
@@ -60,6 +69,8 @@ function onYouTubeIframeAPIReady() {
           
           case YT.PlayerState.PAUSED:
             disableParty();
+            clearInterval(timeCheck);
+            // console.log(player.getCurrentTime());
             break;
         }
       }
@@ -85,8 +96,8 @@ class Particle {
     const { xMin, xMax, yMin, yMax } = inst.bounds();
     inst.x = random(xMin, xMax);
     inst.y = random(yMin, yMax);
-    inst.vx = 4 * Math.random() - 2;
-    inst.gravity = random(1, -6);
+    inst.vx = random(5, -10);
+    inst.gravity = random(1, -12);
     inst.rotation = random(1, 360);
     inst.opacity = +((100 * Math.random()) / 100).toFixed(2);
     inst.color = getRandomColor();
@@ -158,12 +169,12 @@ const handleResize = () => {
   let resizeDebounce;
   
   return () => {
-    pS.stop();
+    if(pS && pS.emitting) pS.stop();
     clearTimeout(resizeDebounce);
     resizeDebounce = setTimeout(() => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-      pS.start();
+      if(pS && pS.emitting) pS.start();
     }, 200);
   };
 };
@@ -193,8 +204,10 @@ class ParticleSystem {
   }
   
   start() {
-    this.emitting = true;
-    this.emit();
+    if(!this.emitting){
+      this.emitting = true;
+      this.emit();
+    }
   }
   
   stop() {
@@ -234,6 +247,8 @@ class ParticleSystem {
         this.splatted.push(splat);
         
         // limit count to save on memory
+        // TODO - paint the splats into another layer and don't keep track of
+        // all the individual splat data.
         if(this.splatted.length > 100) this.splatted.shift();
         
         if(this.emitting) particle.reset();
@@ -248,8 +263,16 @@ class ParticleSystem {
     
     if(
       this.emitting 
-      || !this.emitting && this.splatted.length !== this.particles.length
+      || !this.emitting && !this.allSplatted
     ) requestAnimationFrame(this.emit);
+    
+    this.allSplatted = true;
+    for(let i=0; i<this.particles.length; i++){
+      if(!this.particles[i].splat){
+        this.allSplatted = false;
+        break;
+      }
+    }
   }
 }
 
@@ -262,7 +285,7 @@ window.addEventListener('DOMContentLoaded', () => {
   loadIcons.then(() => {
     pS = new ParticleSystem({
       Particle,
-      count: 20,
+      count: 10,
       bounds: () => ({
         xMin: canvas.width / 2 - playerWidth / 2,
         xMax: playerWidth,
