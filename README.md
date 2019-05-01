@@ -73,6 +73,8 @@ Icons will be versioned via folders.
 
 ## View Example
 
+This will start up the server with all static assets built. 
+
 ```sh
 # Install all deps
 npm i
@@ -81,13 +83,11 @@ npm i
 npm run start
 ```
 
-This will start up the server with all static assets built. To view how the
-assets will perform on a static server you'll want to append `/index.html` to
-the URLs that are presented. 
-
 ---
 
 ## Development
+
+This will start up the server up in watch mode, allowing for changes on the fly.
 
 ```sh
 # Install all deps
