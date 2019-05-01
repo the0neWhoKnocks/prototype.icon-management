@@ -4,6 +4,10 @@ const { DIST_PUBLIC_ICONS } = require('ROOT/conf.app');
 const { renderShell } = require('SERVER/routeHandlers/icons');
 const getPort = require('UTILS/getPort');
 
+// TODO - wire this up for GH pages
+// const BUCKET_URL = (process.env.NODE_ENV === 'production')
+//   ? `https://the0newhoknocks.github.io/<repo>/`
+//   : `http://localhost:${ getPort() }/icons`;
 const BUCKET_URL = `http://localhost:${ getPort() }/icons`;
 let manifest = {};
 let shellOpts;

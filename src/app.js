@@ -27,6 +27,13 @@ const App = () => (
         height: 100%;
       }
       
+      #player {
+        width: 560;
+        height: 315;
+        margin: 0 auto;
+        background: #000;
+      }
+      
       .wrapper {
         position: absolute;
         top: 50%;
@@ -91,8 +98,19 @@ const App = () => (
         <Tag icon="mood_bad" title="sad face" desc="A frowning face">Ground</Tag>!!!
       </div>
       <div id="player"></div>
+      <div>
+        <Icon name="people" version="v1.0.0" title="smiley face" desc="A smiling face">Happy</Icon>
+        <Icon name="people" version="v1.1.0" title="smiley face" desc="A smiling face">Happy</Icon>
+      </div>
     </div>
   </Fragment>
 );
 
 render(<App />, document.getElementById('root'));
+
+// API has to load after the DOM's been updated
+// https://developers.google.com/youtube/iframe_api_reference
+const tag = document.createElement('script');
+const firstScriptTag = document.getElementsByTagName('script')[0];
+tag.src = 'https://www.youtube.com/iframe_api';
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);

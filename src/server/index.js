@@ -18,7 +18,7 @@ const port = getPort();
 const env = getEnv();
 
 const inspectMiddleware = [];
-if( env !== 'production' ){
+if( env === 'dev' ){
   // https://nodejs.org/api/inspector.html
   const inspector = require('inspector');
   inspectMiddleware.push(
@@ -41,9 +41,9 @@ const showIconURLs = () => {
   const { PUBLIC_ICONS } = require('ROOT/conf.app');
   let iconURLs = [];
   
-  readdirSync(PUBLIC_ICONS).forEach(version => {
-    if(!version.includes('manifest.json')){
-      iconURLs.push(color.cyan(`http://localhost:${ port }/icons/${ version }`));
+  readdirSync(PUBLIC_ICONS).forEach(fileName => {
+    if( !/(manifest\.json|index.html)$/.test(fileName) ){
+      iconURLs.push(color.cyan(`http://localhost:${ port }/icons/${ fileName }`));
     }
   });
   
@@ -87,7 +87,7 @@ http
         + `\n  Internal: ${ color.cyan(`http://localhost:${ port }/`) }`
         + `\n  External: ${ color.cyan(`http://${ getExternalIP() }:${ port }/`) }`;
       
-      if(env !== 'production'){
+      if(env === 'dev'){
         msg += `\n  Watching: ${ color.cyan(`http://localhost:${ port + 1 }/`) }`;
       }
       

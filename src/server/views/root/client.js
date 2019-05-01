@@ -8,7 +8,7 @@ let playing = false;
 let canvas, ctx, pS;
 
 const cakeIcon = new Image();
-const cakeURL = 'http://localhost:4000/icons/v1.0.0/cake.svg';
+const cakeURL = `${ window.location.origin }/icons/v1.0.0/cake.svg`;
 const smashedCakeSVG = `
   <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48">
     <path fill="#fff" d="M45.25 47.625c0-1.035-1.315-1.875-2.938-1.875-.151 0-.296.015-.441.028 0-.01.003-.02.003-.029 0-.967-.729-1.751-1.626-1.751-.584 0-1.091.334-1.378.831-1.321-.57-2.867-.788-4.245-.593-.758.107-1.473.183-2.151.235.052-.141.089-.297.089-.474 0-.516-.252-.934-.563-.934s-.563.418-.563.934c0 .203.047.381.113.534-3.593.182-5.801-.296-5.801-.296l1.622-3.089-2.49-1.55s-2.026 2.402-2.892 3.277c-.694.701-2.604 1.643-6.232 1.924.073-.212.117-.44.117-.681 0-1.07-.784-1.938-1.75-1.938s-1.75.867-1.75 1.938c0 .269.049.523.138.756-2.544-.024-5.173.482-6.136 2.325-.107-.123-.238-.206-.387-.206-.345 0-.625.395-.625.882H45.21c.018-.081.04-.162.04-.248zM4.58 47.875c.018-.083.045-.161.045-.25 0-.621-.448-1.125-1-1.125s-1 .504-1 1.125c0 .089.027.167.045.25h1.91z"/>
@@ -282,18 +282,20 @@ window.addEventListener('DOMContentLoaded', () => {
   canvas.height = window.innerHeight;
   ctx = canvas.getContext('2d');
   
-  loadIcons.then(() => {
-    pS = new ParticleSystem({
-      Particle,
-      count: 10,
-      bounds: () => ({
-        xMin: canvas.width / 2 - playerWidth / 2,
-        xMax: playerWidth,
-        yMin: canvas.height / 2 - playerHeight / 2,
-        yMax: playerHeight,
-      }),
-    });
-  });
-  
-  window.addEventListener('resize', handleResize());
+  loadIcons
+    .then(() => {
+      pS = new ParticleSystem({
+        Particle,
+        count: 10,
+        bounds: () => ({
+          xMin: canvas.width / 2 - playerWidth / 2,
+          xMax: playerWidth,
+          yMin: canvas.height / 2 - playerHeight / 2,
+          yMax: playerHeight,
+        }),
+      });
+      
+      window.addEventListener('resize', handleResize());
+    })
+    .catch(err => alert(err));
 });
