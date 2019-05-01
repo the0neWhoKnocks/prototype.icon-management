@@ -12,26 +12,23 @@ A proposal for how to manage static assets.
 ## Proposed Structure
 
 ```sh
-.
-├─ modules/
-│  └─ @org/
-│     ├─ org-icons/
-│     └─ org-react-icons/
-│
-└─ server/
-   └─ public/
-      └─ icons/
-         ├─ v1.0.0/
-         │  ├─ ... icons
-         │  └─ manifest.json
-         ├─ v1.0.1/
-         │  ├─ ... icons
-         │  └─ manifest.json
-         ├─ v1.1.0/
-         │  ├─ ... icons
-         │  └─ manifest.json
-         └─ manifest.json
+modules/
+└─ @org/
+   ├─ org-icons/
+   └─ org-react-icons/
 
+server/
+└─ icons/
+   ├─ v1.0.0/
+   │  ├─ ... icons
+   │  └─ manifest.json
+   ├─ v1.0.1/
+   │  ├─ ... icons
+   │  └─ manifest.json
+   ├─ v1.1.0/
+   │  ├─ ... icons
+   │  └─ manifest.json
+   └─ manifest.json
 ```
 
 ### Modules
