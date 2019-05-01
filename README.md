@@ -21,13 +21,17 @@ server/
 └─ icons/
    ├─ v1.0.0/
    │  ├─ ... icons
+   │  ├─ index.html
    │  └─ manifest.json
    ├─ v1.0.1/
    │  ├─ ... icons
+   │  ├─ index.html
    │  └─ manifest.json
    ├─ v1.1.0/
    │  ├─ ... icons
+   │  ├─ index.html
    │  └─ manifest.json
+   ├─ index.html
    └─ manifest.json
 ```
 
