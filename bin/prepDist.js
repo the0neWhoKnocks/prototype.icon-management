@@ -28,6 +28,8 @@ console.log(`Created client vendor directory ➜ "${ DIST_VENDOR }"`);
 // copy over files
 copyFileSync('./conf.app.js', `${ DIST }/conf.app.js`);
 console.log(`Copied conf to ➜ "${ DIST }"`);
+copyFileSync('./package.json', `${ DIST }/package.json`);
+console.log(`Copied package.json to ➜ "${ DIST }"`);
 try {
   copySync(SRC_STATIC_ICONS, DIST_PUBLIC_ICONS);
   console.log(`Copied icons to "${ DIST_PUBLIC_ICONS }"`);
@@ -44,5 +46,3 @@ try {
   copyFileSync(filePath, output);
   console.log(`Copied vendor file to ➜ "${ output }"`);
 });
-
-// TODO - this isn't running consistently every time

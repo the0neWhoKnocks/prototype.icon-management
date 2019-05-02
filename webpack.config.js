@@ -4,6 +4,7 @@ const WebpackAssetsManifest = require('webpack-assets-manifest');
 const SimpleProgressWebpackPlugin = require('simple-progress-webpack-plugin');
 const TidyPlugin = require('@noxx/webpack-tidy-plugin');
 const {
+  DIST,
   DIST_JS,
   SRC,
 } = require('./conf.app');
@@ -78,6 +79,7 @@ const conf = {
     new webpack.DefinePlugin({
       'process.env.ON_CLIENT': true,
       'process.env.PORT': process.env.PORT,
+      'process.env.PROD_BUCKET': process.env.PROD_BUCKET,
     }),
     /**
      * Provides build progress in the CLI
@@ -92,7 +94,48 @@ const conf = {
   stats: stats,
 };
 
-if(MODE !== 'production'){
+if(MODE === 'production'){
+  const { readFileSync } = require('fs');
+  const HtmlWebpackPlugin = require('html-webpack-plugin');
+  const { iconsToSymbols } = require(`${ DIST }/cjs/modules/@org/org-icons`);
+  const clientJS = readFileSync(`${ SRC }/server/views/root/client.js`, 'utf8');
+  // emulate how the module would function
+  const iconOpts = {
+    icons: ['cake', 'mood', 'mood_bad'],
+    version: 'v1.1.0',
+  };
+  const iconsManifest = JSON.parse(
+    readFileSync(`${ DIST }/public/icons/${ iconOpts.version }/manifest.json`, 'utf8')
+  );
+  const icons = {};
+  iconOpts.icons.forEach((name) => {
+    const svgPath = `${ SRC }/static/icons/${ iconsManifest[name].split('/icons/')[1] }`;
+    icons[name] = readFileSync(svgPath, 'utf8');
+  });
+  
+  conf.plugins.push(
+    /**
+     * Wires up the example HTML with generated bundles
+     */
+    new HtmlWebpackPlugin({
+      filename: '../index.html',
+      template: `${ SRC }/server/views/shell.js`,
+      templateParameters: {
+        // NOTE - Similar params exist in `SERVER/routeHandlers/root.js` and may have to updated.
+        icons: iconsToSymbols(icons),
+        scripts: {
+          head: [
+            { src: `js/vendor/react.production.min.js` },
+            { src: `js/vendor/react-dom.production.min.js` },
+            { raw: clientJS },
+          ],
+        },
+        title: 'Root View',
+      },
+    })
+  );
+}
+else {
   conf.plugins.push(
     new TidyPlugin({
       cleanOutput: true,
