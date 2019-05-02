@@ -4,11 +4,15 @@ const { DIST_PUBLIC_ICONS } = require('ROOT/conf.app');
 const { renderShell } = require('SERVER/routeHandlers/icons');
 const getPort = require('UTILS/getPort');
 
-// TODO - wire this up for GH pages
-// const BUCKET_URL = (process.env.NODE_ENV === 'production')
-//   ? `https://the0newhoknocks.github.io/<repo>/`
-//   : `http://localhost:${ getPort() }/icons`;
-const BUCKET_URL = `http://localhost:${ getPort() }/icons`;
+let prodBucket = ''
+if(process.env.PROD_BUCKET){
+  const { repository } = require('ROOT/package.json');
+  const urlParts = repository.url.replace('git+https://github.com/', '').split('/');
+  prodBucket = `https://${ urlParts[0] }.github.io/${ urlParts[1] }`;
+}
+
+const BUCKET_PATH = (prodBucket) ? prodBucket : `http://localhost:${ getPort() }`;
+const ICONS_URL = `${ BUCKET_PATH }/icons`;
 let manifest = {};
 let shellOpts;
 
@@ -22,7 +26,7 @@ readdirSync(DIST_PUBLIC_ICONS).forEach(version => {
   // builds out manifest with updated version specific paths
   readdirSync(folder).forEach(svg => {
     const { base, name } = parse(`${folder}/${svg}`);
-    manifest[name] = `${BUCKET_URL}/${version}/${base}`;
+    manifest[name] = `${ICONS_URL}/${version}/${base}`;
   });
   
   // alphabetize keys
