@@ -55,6 +55,18 @@
   background: #eee;
 }
 
+.top-nav {
+  text-align: right;
+  padding: 0.5em;
+  background: #333;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.top-nav input {
+  padding: 0.25em 0.5em;
+}
+
 icon-cards {
   padding: 1em;
   display: grid;
@@ -188,6 +200,7 @@ panel {
   left: 0;
   right: 0;
   pointer-events: none;
+  z-index: 10;
 }
 
 panel-content {
@@ -275,6 +288,134 @@ const tab = ({ content, title }) => `
   </tab>
 `;
 
+const renderIconCards = (query) => {
+  const cards = Object.keys(window.manifest).map((icon) => {
+    if(icon === '_version') return '';
+    
+    if(query && !icon.includes(query)) return '';
+    
+    const src = window.manifest[icon];
+    const relSrc = `/${ src.split('/').slice(3).join('/') }`;
+    
+    return `
+      <icon-card>
+        <card>
+          <icon-wrapper>
+            <icon><img src="${ relSrc }" /></icon>
+            <icon-text>${ icon }</icon-text>
+          </icon-wrapper>
+          <button
+            name="usage"
+            data-name="${ icon }"
+            data-src="${ relSrc }"
+          >Usage</button>
+        </card>
+      </icon-card>
+    `;
+  }).join('');
+  
+  els.iconsCards.innerHTML = cards;
+};
+
+const handleUsageClick = (data) => {
+  const { name, src } = data;
+  const tabs = [
+    tab({
+      title: 'img',
+      content:
+        '<p>Standard img request format.</p>'
+        + `<code class="html">&lt;img src="${ window.location.origin }${ src }" /&gt;</code>`
+      ,
+    }),
+    tab({
+      title: 'svg',
+      content:
+        '<p>This approach allows for customization of the icon since it adds a copy of the full SVG to the DOM.</p>'
+        + '<code class="js">'
+        + "import { Icon } from '@ORG/org-react-icon';"
+        + '\n'  
+        + '\nconst App = () => ('
+        + '\n  &lt;div&gt;'
+        + '\n    &lt;Icon' 
+        + `\n      name="${ name }"`
+        + '\n      title="Icon title"'
+        + '\n      desc="An icon description"'
+        + '\n    /&gt;'
+        + '\n  &lt;/div&gt;'
+        + '\n);'
+        + '\n</code>'
+      ,
+    }),
+    tab({
+      title: 'svg link',
+      content:
+        '<p>This approach has the same benefits of the svg usage, but also trims down Client requests.</p>'
+        + '<h4>Server</h4>'
+        + '<ul>'
+        + '  <li>Downloads and caches the icons on Server startup.</li>'
+        + '  <li>Passes icons to Shell</li>'
+        + '</ul>'
+        + '<code class="js">'
+        + "import { getIcons, iconsToSymbols } from '@ORG/org-icons';"
+        + '\n\n'
+        + '\n// Fetches and caches the specified icons'
+        + '\nconst iconsPromise = getIcons({'
+        + "\n  icons: ['cake', 'mood', 'mood_bad'],"
+        + "\n  version: 'v1.1.0',"
+        + '\n});'
+        + '\n\n'
+        + '\n// Once the icons have been fetched, pass them to your View'
+        + '\niconsPromise.then((icons) => {'
+        + '\n  renderShell({ icons });'
+        + '\n});'
+        + '</code>'
+        + '<h4>Shell</h4>'
+        + '<ul>'
+        + '  <li>Inlines the SVGs for link reference usage.</li>'
+        + '</ul>'
+        + '<code class="js">'
+        + 'const shell = ({ icons }) => \`'
+        + '\n  &lt;html&gt;'
+        + '\n    &lt;body&gt;'
+        + '\n      ${ icons }'
+        + '\n    &lt;/body&gt;'
+        + '\n  &lt;/html&gt;'
+        + '\n\`;'
+        + '</code>'
+        + '<h4>Client</h4>'
+        + '<ul>'
+        + '  <li>Uses a reference to one of the inlined SVGs</li>'
+        + '</ul>'
+        + '<code class="js">'
+        + "import { IconLink } from '@ORG/org-react-icon';"
+        + '\n'  
+        + '\nconst App = () => ('
+        + '\n  &lt;div&gt;'
+        + '\n    &lt;IconLink' 
+        + `\n      name="${ name }"`
+        + '\n      title="Icon title"'
+        + '\n      desc="An icon description"'
+        + '\n    /&gt;'
+        + '\n  &lt;/div&gt;'
+        + '\n);'
+        + '\n</code>'
+      ,
+    }),
+  ];
+  els.panelContent.innerHTML = `
+    <tabs>
+      <tabs-row>${ tabs.join('') }</tabs-row>
+      <tabs-content></tabs-content>
+    </tabs>
+  `;
+  wireUpTabs();
+  els.panel.classList.toggle('open');
+};
+
+const handleSearch = (ev) => {
+  renderIconCards(ev.target.value);
+};
+
 const addListeners = () => {
   document.body.addEventListener('click', (ev) => {
     const el = ev.target;
@@ -282,98 +423,7 @@ const addListeners = () => {
     if(el.nodeName === 'BUTTON') {
       switch(el.getAttribute('name')){
         case 'usage': {
-          const { name, src } = el.dataset;
-          const tabs = [
-            tab({
-              title: 'img',
-              content:
-                '<p>Standard img request format.</p>'
-                + `<code class="html">&lt;img src="${ window.location.origin }${ src }" /&gt;</code>`
-              ,
-            }),
-            tab({
-              title: 'svg',
-              content:
-                '<p>This approach allows for customization of the icon since it adds a copy of the full SVG to the DOM.</p>'
-                + '<code class="js">'
-                + "import { Icon } from '@ORG/org-react-icon';"
-                + '\n'  
-                + '\nconst App = () => ('
-                + '\n  &lt;div&gt;'
-                + '\n    &lt;Icon' 
-                + `\n      name="${ name }"`
-                + '\n      title="Icon title"'
-                + '\n      desc="An icon description"'
-                + '\n    /&gt;'
-                + '\n  &lt;/div&gt;'
-                + '\n);'
-                + '\n</code>'
-              ,
-            }),
-            tab({
-              title: 'svg link',
-              content:
-                '<p>This approach has the same benefits of the svg usage, but also trims down Client requests.</p>'
-                + '<h4>Server</h4>'
-                + '<ul>'
-                + '  <li>Downloads and caches the icons on Server startup.</li>'
-                + '  <li>Passes icons to Shell</li>'
-                + '</ul>'
-                + '<code class="js">'
-                + "import { getIcons, iconsToSymbols } from '@ORG/org-icons';"
-                + '\n\n'
-                + '\n// Fetches and caches the specified icons'
-                + '\nconst iconsPromise = getIcons({'
-                + "\n  icons: ['cake', 'mood', 'mood_bad'],"
-                + "\n  version: 'v1.1.0',"
-                + '\n});'
-                + '\n\n'
-                + '\n// Once the icons have been fetched, pass them to your View'
-                + '\niconsPromise.then((icons) => {'
-                + '\n  renderShell({ icons });'
-                + '\n});'
-                + '</code>'
-                + '<h4>Shell</h4>'
-                + '<ul>'
-                + '  <li>Inlines the SVGs for link reference usage.</li>'
-                + '</ul>'
-                + '<code class="js">'
-                + 'const shell = ({ icons }) => \`'
-                + '\n  &lt;html&gt;'
-                + '\n    &lt;body&gt;'
-                + '\n      ${ icons }'
-                + '\n    &lt;/body&gt;'
-                + '\n  &lt;/html&gt;'
-                + '\n\`;'
-                + '</code>'
-                + '<h4>Client</h4>'
-                + '<ul>'
-                + '  <li>Uses a reference to one of the inlined SVGs</li>'
-                + '</ul>'
-                + '<code class="js">'
-                + "import { IconLink } from '@ORG/org-react-icon';"
-                + '\n'  
-                + '\nconst App = () => ('
-                + '\n  &lt;div&gt;'
-                + '\n    &lt;IconLink' 
-                + `\n      name="${ name }"`
-                + '\n      title="Icon title"'
-                + '\n      desc="An icon description"'
-                + '\n    /&gt;'
-                + '\n  &lt;/div&gt;'
-                + '\n);'
-                + '\n</code>'
-              ,
-            }),
-          ];
-          els.panelContent.innerHTML = `
-            <tabs>
-              <tabs-row>${ tabs.join('') }</tabs-row>
-              <tabs-content></tabs-content>
-            </tabs>
-          `;
-          wireUpTabs();
-          els.panel.classList.toggle('open');
+          handleUsageClick(el.dataset);
           break;
         }
 
@@ -384,14 +434,19 @@ const addListeners = () => {
       }
     }
   });
+  
+  els.searchInput.addEventListener('input', handleSearch);
 };
 
 window.addEventListener('DOMContentLoaded', () => {
   els.panel = document.querySelector('panel');
   els.panelContent = document.querySelector('panel-content');
   els.panelMask = document.querySelector('panel-mask');
+  els.searchInput = document.querySelector('[name="search"]');
+  els.iconsCards = document.querySelector('icon-cards');
   
   addListeners();
+  renderIconCards();
 });
             //]]></script>
     </head>
@@ -399,399 +454,13 @@ window.addEventListener('DOMContentLoaded', () => {
       
       
       <div id="root">
-    <icon-cards>
-      <icon-card>
-        <card>
-          <icon-wrapper>
-            <icon><img src="/prototype.icon-management/icons/v1.0.0/cake.svg" /></icon>
-            <icon-text>cake</icon-text>
-          </icon-wrapper>
-          <button
-            name="usage"
-            data-name="cake"
-            data-src="/prototype.icon-management/icons/v1.0.0/cake.svg"
-          >Usage</button>
-        </card>
-      </icon-card>
-    
-      <icon-card>
-        <card>
-          <icon-wrapper>
-            <icon><img src="/prototype.icon-management/icons/v1.0.0/domain.svg" /></icon>
-            <icon-text>domain</icon-text>
-          </icon-wrapper>
-          <button
-            name="usage"
-            data-name="domain"
-            data-src="/prototype.icon-management/icons/v1.0.0/domain.svg"
-          >Usage</button>
-        </card>
-      </icon-card>
-    
-      <icon-card>
-        <card>
-          <icon-wrapper>
-            <icon><img src="/prototype.icon-management/icons/v1.0.0/group_add.svg" /></icon>
-            <icon-text>group_add</icon-text>
-          </icon-wrapper>
-          <button
-            name="usage"
-            data-name="group_add"
-            data-src="/prototype.icon-management/icons/v1.0.0/group_add.svg"
-          >Usage</button>
-        </card>
-      </icon-card>
-    
-      <icon-card>
-        <card>
-          <icon-wrapper>
-            <icon><img src="/prototype.icon-management/icons/v1.0.0/location_city.svg" /></icon>
-            <icon-text>location_city</icon-text>
-          </icon-wrapper>
-          <button
-            name="usage"
-            data-name="location_city"
-            data-src="/prototype.icon-management/icons/v1.0.0/location_city.svg"
-          >Usage</button>
-        </card>
-      </icon-card>
-    
-      <icon-card>
-        <card>
-          <icon-wrapper>
-            <icon><img src="/prototype.icon-management/icons/v1.0.0/mood.svg" /></icon>
-            <icon-text>mood</icon-text>
-          </icon-wrapper>
-          <button
-            name="usage"
-            data-name="mood"
-            data-src="/prototype.icon-management/icons/v1.0.0/mood.svg"
-          >Usage</button>
-        </card>
-      </icon-card>
-    
-      <icon-card>
-        <card>
-          <icon-wrapper>
-            <icon><img src="/prototype.icon-management/icons/v1.0.0/mood_bad.svg" /></icon>
-            <icon-text>mood_bad</icon-text>
-          </icon-wrapper>
-          <button
-            name="usage"
-            data-name="mood_bad"
-            data-src="/prototype.icon-management/icons/v1.0.0/mood_bad.svg"
-          >Usage</button>
-        </card>
-      </icon-card>
-    
-      <icon-card>
-        <card>
-          <icon-wrapper>
-            <icon><img src="/prototype.icon-management/icons/v1.0.0/notifications.svg" /></icon>
-            <icon-text>notifications</icon-text>
-          </icon-wrapper>
-          <button
-            name="usage"
-            data-name="notifications"
-            data-src="/prototype.icon-management/icons/v1.0.0/notifications.svg"
-          >Usage</button>
-        </card>
-      </icon-card>
-    
-      <icon-card>
-        <card>
-          <icon-wrapper>
-            <icon><img src="/prototype.icon-management/icons/v1.0.0/notifications_active.svg" /></icon>
-            <icon-text>notifications_active</icon-text>
-          </icon-wrapper>
-          <button
-            name="usage"
-            data-name="notifications_active"
-            data-src="/prototype.icon-management/icons/v1.0.0/notifications_active.svg"
-          >Usage</button>
-        </card>
-      </icon-card>
-    
-      <icon-card>
-        <card>
-          <icon-wrapper>
-            <icon><img src="/prototype.icon-management/icons/v1.0.0/notifications_none.svg" /></icon>
-            <icon-text>notifications_none</icon-text>
-          </icon-wrapper>
-          <button
-            name="usage"
-            data-name="notifications_none"
-            data-src="/prototype.icon-management/icons/v1.0.0/notifications_none.svg"
-          >Usage</button>
-        </card>
-      </icon-card>
-    
-      <icon-card>
-        <card>
-          <icon-wrapper>
-            <icon><img src="/prototype.icon-management/icons/v1.0.0/notifications_off.svg" /></icon>
-            <icon-text>notifications_off</icon-text>
-          </icon-wrapper>
-          <button
-            name="usage"
-            data-name="notifications_off"
-            data-src="/prototype.icon-management/icons/v1.0.0/notifications_off.svg"
-          >Usage</button>
-        </card>
-      </icon-card>
-    
-      <icon-card>
-        <card>
-          <icon-wrapper>
-            <icon><img src="/prototype.icon-management/icons/v1.0.0/notifications_paused.svg" /></icon>
-            <icon-text>notifications_paused</icon-text>
-          </icon-wrapper>
-          <button
-            name="usage"
-            data-name="notifications_paused"
-            data-src="/prototype.icon-management/icons/v1.0.0/notifications_paused.svg"
-          >Usage</button>
-        </card>
-      </icon-card>
-    
-      <icon-card>
-        <card>
-          <icon-wrapper>
-            <icon><img src="/prototype.icon-management/icons/v1.0.0/pages.svg" /></icon>
-            <icon-text>pages</icon-text>
-          </icon-wrapper>
-          <button
-            name="usage"
-            data-name="pages"
-            data-src="/prototype.icon-management/icons/v1.0.0/pages.svg"
-          >Usage</button>
-        </card>
-      </icon-card>
-    
-      <icon-card>
-        <card>
-          <icon-wrapper>
-            <icon><img src="/prototype.icon-management/icons/v1.0.0/party_mode.svg" /></icon>
-            <icon-text>party_mode</icon-text>
-          </icon-wrapper>
-          <button
-            name="usage"
-            data-name="party_mode"
-            data-src="/prototype.icon-management/icons/v1.0.0/party_mode.svg"
-          >Usage</button>
-        </card>
-      </icon-card>
-    
-      <icon-card>
-        <card>
-          <icon-wrapper>
-            <icon><img src="/prototype.icon-management/icons/v1.0.0/people.svg" /></icon>
-            <icon-text>people</icon-text>
-          </icon-wrapper>
-          <button
-            name="usage"
-            data-name="people"
-            data-src="/prototype.icon-management/icons/v1.0.0/people.svg"
-          >Usage</button>
-        </card>
-      </icon-card>
-    
-      <icon-card>
-        <card>
-          <icon-wrapper>
-            <icon><img src="/prototype.icon-management/icons/v1.0.0/people_outline.svg" /></icon>
-            <icon-text>people_outline</icon-text>
-          </icon-wrapper>
-          <button
-            name="usage"
-            data-name="people_outline"
-            data-src="/prototype.icon-management/icons/v1.0.0/people_outline.svg"
-          >Usage</button>
-        </card>
-      </icon-card>
-    
-      <icon-card>
-        <card>
-          <icon-wrapper>
-            <icon><img src="/prototype.icon-management/icons/v1.0.0/person.svg" /></icon>
-            <icon-text>person</icon-text>
-          </icon-wrapper>
-          <button
-            name="usage"
-            data-name="person"
-            data-src="/prototype.icon-management/icons/v1.0.0/person.svg"
-          >Usage</button>
-        </card>
-      </icon-card>
-    
-      <icon-card>
-        <card>
-          <icon-wrapper>
-            <icon><img src="/prototype.icon-management/icons/v1.0.0/person_add.svg" /></icon>
-            <icon-text>person_add</icon-text>
-          </icon-wrapper>
-          <button
-            name="usage"
-            data-name="person_add"
-            data-src="/prototype.icon-management/icons/v1.0.0/person_add.svg"
-          >Usage</button>
-        </card>
-      </icon-card>
-    
-      <icon-card>
-        <card>
-          <icon-wrapper>
-            <icon><img src="/prototype.icon-management/icons/v1.0.0/person_outline.svg" /></icon>
-            <icon-text>person_outline</icon-text>
-          </icon-wrapper>
-          <button
-            name="usage"
-            data-name="person_outline"
-            data-src="/prototype.icon-management/icons/v1.0.0/person_outline.svg"
-          >Usage</button>
-        </card>
-      </icon-card>
-    
-      <icon-card>
-        <card>
-          <icon-wrapper>
-            <icon><img src="/prototype.icon-management/icons/v1.0.0/plus_one.svg" /></icon>
-            <icon-text>plus_one</icon-text>
-          </icon-wrapper>
-          <button
-            name="usage"
-            data-name="plus_one"
-            data-src="/prototype.icon-management/icons/v1.0.0/plus_one.svg"
-          >Usage</button>
-        </card>
-      </icon-card>
-    
-      <icon-card>
-        <card>
-          <icon-wrapper>
-            <icon><img src="/prototype.icon-management/icons/v1.0.0/poll.svg" /></icon>
-            <icon-text>poll</icon-text>
-          </icon-wrapper>
-          <button
-            name="usage"
-            data-name="poll"
-            data-src="/prototype.icon-management/icons/v1.0.0/poll.svg"
-          >Usage</button>
-        </card>
-      </icon-card>
-    
-      <icon-card>
-        <card>
-          <icon-wrapper>
-            <icon><img src="/prototype.icon-management/icons/v1.0.0/public.svg" /></icon>
-            <icon-text>public</icon-text>
-          </icon-wrapper>
-          <button
-            name="usage"
-            data-name="public"
-            data-src="/prototype.icon-management/icons/v1.0.0/public.svg"
-          >Usage</button>
-        </card>
-      </icon-card>
-    
-      <icon-card>
-        <card>
-          <icon-wrapper>
-            <icon><img src="/prototype.icon-management/icons/v1.0.0/school.svg" /></icon>
-            <icon-text>school</icon-text>
-          </icon-wrapper>
-          <button
-            name="usage"
-            data-name="school"
-            data-src="/prototype.icon-management/icons/v1.0.0/school.svg"
-          >Usage</button>
-        </card>
-      </icon-card>
-    
-      <icon-card>
-        <card>
-          <icon-wrapper>
-            <icon><img src="/prototype.icon-management/icons/v1.0.0/sentiment_dissatisfied.svg" /></icon>
-            <icon-text>sentiment_dissatisfied</icon-text>
-          </icon-wrapper>
-          <button
-            name="usage"
-            data-name="sentiment_dissatisfied"
-            data-src="/prototype.icon-management/icons/v1.0.0/sentiment_dissatisfied.svg"
-          >Usage</button>
-        </card>
-      </icon-card>
-    
-      <icon-card>
-        <card>
-          <icon-wrapper>
-            <icon><img src="/prototype.icon-management/icons/v1.0.0/sentiment_neutral.svg" /></icon>
-            <icon-text>sentiment_neutral</icon-text>
-          </icon-wrapper>
-          <button
-            name="usage"
-            data-name="sentiment_neutral"
-            data-src="/prototype.icon-management/icons/v1.0.0/sentiment_neutral.svg"
-          >Usage</button>
-        </card>
-      </icon-card>
-    
-      <icon-card>
-        <card>
-          <icon-wrapper>
-            <icon><img src="/prototype.icon-management/icons/v1.0.0/sentiment_satisfied.svg" /></icon>
-            <icon-text>sentiment_satisfied</icon-text>
-          </icon-wrapper>
-          <button
-            name="usage"
-            data-name="sentiment_satisfied"
-            data-src="/prototype.icon-management/icons/v1.0.0/sentiment_satisfied.svg"
-          >Usage</button>
-        </card>
-      </icon-card>
-    
-      <icon-card>
-        <card>
-          <icon-wrapper>
-            <icon><img src="/prototype.icon-management/icons/v1.0.0/sentiment_very_satisfied.svg" /></icon>
-            <icon-text>sentiment_very_satisfied</icon-text>
-          </icon-wrapper>
-          <button
-            name="usage"
-            data-name="sentiment_very_satisfied"
-            data-src="/prototype.icon-management/icons/v1.0.0/sentiment_very_satisfied.svg"
-          >Usage</button>
-        </card>
-      </icon-card>
-    
-      <icon-card>
-        <card>
-          <icon-wrapper>
-            <icon><img src="/prototype.icon-management/icons/v1.0.0/share.svg" /></icon>
-            <icon-text>share</icon-text>
-          </icon-wrapper>
-          <button
-            name="usage"
-            data-name="share"
-            data-src="/prototype.icon-management/icons/v1.0.0/share.svg"
-          >Usage</button>
-        </card>
-      </icon-card>
-    
-      <icon-card>
-        <card>
-          <icon-wrapper>
-            <icon><img src="/prototype.icon-management/icons/v1.0.0/whatshot.svg" /></icon>
-            <icon-text>whatshot</icon-text>
-          </icon-wrapper>
-          <button
-            name="usage"
-            data-name="whatshot"
-            data-src="/prototype.icon-management/icons/v1.0.0/whatshot.svg"
-          >Usage</button>
-        </card>
-      </icon-card>
-    </icon-cards>
+    <script>
+      window.manifest = {"_version":"v1.0.0","cake":"https://the0neWhoKnocks.github.io/prototype.icon-management/icons/v1.0.0/cake.svg","domain":"https://the0neWhoKnocks.github.io/prototype.icon-management/icons/v1.0.0/domain.svg","group_add":"https://the0neWhoKnocks.github.io/prototype.icon-management/icons/v1.0.0/group_add.svg","location_city":"https://the0neWhoKnocks.github.io/prototype.icon-management/icons/v1.0.0/location_city.svg","mood":"https://the0neWhoKnocks.github.io/prototype.icon-management/icons/v1.0.0/mood.svg","mood_bad":"https://the0neWhoKnocks.github.io/prototype.icon-management/icons/v1.0.0/mood_bad.svg","notifications":"https://the0neWhoKnocks.github.io/prototype.icon-management/icons/v1.0.0/notifications.svg","notifications_active":"https://the0neWhoKnocks.github.io/prototype.icon-management/icons/v1.0.0/notifications_active.svg","notifications_none":"https://the0neWhoKnocks.github.io/prototype.icon-management/icons/v1.0.0/notifications_none.svg","notifications_off":"https://the0neWhoKnocks.github.io/prototype.icon-management/icons/v1.0.0/notifications_off.svg","notifications_paused":"https://the0neWhoKnocks.github.io/prototype.icon-management/icons/v1.0.0/notifications_paused.svg","pages":"https://the0neWhoKnocks.github.io/prototype.icon-management/icons/v1.0.0/pages.svg","party_mode":"https://the0neWhoKnocks.github.io/prototype.icon-management/icons/v1.0.0/party_mode.svg","people":"https://the0neWhoKnocks.github.io/prototype.icon-management/icons/v1.0.0/people.svg","people_outline":"https://the0neWhoKnocks.github.io/prototype.icon-management/icons/v1.0.0/people_outline.svg","person":"https://the0neWhoKnocks.github.io/prototype.icon-management/icons/v1.0.0/person.svg","person_add":"https://the0neWhoKnocks.github.io/prototype.icon-management/icons/v1.0.0/person_add.svg","person_outline":"https://the0neWhoKnocks.github.io/prototype.icon-management/icons/v1.0.0/person_outline.svg","plus_one":"https://the0neWhoKnocks.github.io/prototype.icon-management/icons/v1.0.0/plus_one.svg","poll":"https://the0neWhoKnocks.github.io/prototype.icon-management/icons/v1.0.0/poll.svg","public":"https://the0neWhoKnocks.github.io/prototype.icon-management/icons/v1.0.0/public.svg","school":"https://the0neWhoKnocks.github.io/prototype.icon-management/icons/v1.0.0/school.svg","sentiment_dissatisfied":"https://the0neWhoKnocks.github.io/prototype.icon-management/icons/v1.0.0/sentiment_dissatisfied.svg","sentiment_neutral":"https://the0neWhoKnocks.github.io/prototype.icon-management/icons/v1.0.0/sentiment_neutral.svg","sentiment_satisfied":"https://the0neWhoKnocks.github.io/prototype.icon-management/icons/v1.0.0/sentiment_satisfied.svg","sentiment_very_satisfied":"https://the0neWhoKnocks.github.io/prototype.icon-management/icons/v1.0.0/sentiment_very_satisfied.svg","share":"https://the0neWhoKnocks.github.io/prototype.icon-management/icons/v1.0.0/share.svg","whatshot":"https://the0neWhoKnocks.github.io/prototype.icon-management/icons/v1.0.0/whatshot.svg"};
+    </script>
+    <nav class="top-nav">
+      <input type="text" name="search" placeholder="Search" />
+    </nav>
+    <icon-cards></icon-cards>
     <panel>
       <button name="panel-mask"></button>
       <panel-body>
