@@ -1,5 +1,5 @@
+import getEnv from 'UTILS/getEnv';
 import getPort from 'UTILS/getPort';
-import getEnv from 'SERVER/utils/getEnv';
 
 export default ({
   bundleScripts,

@@ -1,10 +1,10 @@
 import color from 'cli-color';
 import http from 'http';
 import { networkInterfaces } from 'os';
-import getPort from 'UTILS/getPort';
-import getEnv from 'SERVER/utils/getEnv';
 import jsonResp from 'SERVER/utils/jsonResp';
 import requestHandler from 'SERVER/utils/requestHandler';
+import getEnv from 'UTILS/getEnv';
+import getPort from 'UTILS/getPort';
 import handleError from './routeHandlers/error';
 import handleIcons from './routeHandlers/icons';
 import handleRootRequest from './routeHandlers/root';
@@ -36,14 +36,14 @@ if( env === 'dev' ){
   );
 }
 
-const showIconURLs = ({ suffix }) => {
+const showIconURLs = () => {
   const { readdirSync } = require('fs');
   const { PUBLIC_ICONS } = require('ROOT/conf.app');
   let iconURLs = [];
   
   readdirSync(PUBLIC_ICONS).forEach(fileName => {
     if( !/(manifest\.json|index.html)$/.test(fileName) ){
-      iconURLs.push(color.cyan(`http://localhost:${ port }/icons/${ fileName }/${ suffix }`));
+      iconURLs.push(color.cyan(`http://localhost:${ port }/icons/${ fileName }/`));
     }
   });
   
@@ -82,17 +82,16 @@ http
   .listen(port, (err) => {
     if(err) throw err;
     setTimeout(() => {
-      const suffix = (env === 'prod') ? 'index.html' : '';
       let msg =
         'Server running at:'
-        + `\n  Internal: ${ color.cyan(`http://localhost:${ port }/${ suffix }`) }`
-        + `\n  External: ${ color.cyan(`http://${ getExternalIP() }:${ port }/${ suffix }`) }`;
+        + `\n  Internal: ${ color.cyan(`http://localhost:${ port }/`) }`
+        + `\n  External: ${ color.cyan(`http://${ getExternalIP() }:${ port }/`) }`;
       
       if(env === 'dev'){
         msg += `\n  Watching: ${ color.cyan(`http://localhost:${ port + 1 }/`) }`;
       }
       
       console.log(msg);
-      showIconURLs({ suffix });
+      showIconURLs();
     }, 1000);
   });

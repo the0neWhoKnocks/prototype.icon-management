@@ -3,7 +3,9 @@ const { parse } = require('path');
 const { DIST_PUBLIC_ICONS } = require('ROOT/conf.app');
 const { renderShell } = require('SERVER/routeHandlers/icons');
 const getIconsURL = require('UTILS/getIconsURL');
+const getEnv = require('UTILS/getEnv');
 
+const env = getEnv();
 const ICONS_URL = getIconsURL();
 let manifest = {};
 let shellOpts;
@@ -34,18 +36,22 @@ readdirSync(DIST_PUBLIC_ICONS).forEach(version => {
   writeFileSync(manifestFile, JSON.stringify(manifest, null, 2), 'utf8');
   console.log(`Created manifest for ${version}`);
   
-  // create index.html
-  shellOpts = {
-    iconsDir: DIST_PUBLIC_ICONS,
-    version,
-  };
-  writeFileSync(indexFile, renderShell(shellOpts), 'utf8');
-  console.log(`Created index.html for ${version}`);
+  if(env === 'prod'){
+    // create index.html
+    shellOpts = {
+      iconsDir: DIST_PUBLIC_ICONS,
+      version,
+    };
+    writeFileSync(indexFile, renderShell(shellOpts), 'utf8');
+    console.log(`Created index.html for ${version}`);
+  }
 });
 
 // newest manifest will live at root
 writeFileSync(`${DIST_PUBLIC_ICONS}/manifest.json`, JSON.stringify(manifest, null, 2), 'utf8');
 console.log('Created root manifest');
 
-writeFileSync(`${DIST_PUBLIC_ICONS}/index.html`, renderShell(shellOpts), 'utf8');
-console.log('Created root index.html');
+if(env === 'prod'){
+  writeFileSync(`${DIST_PUBLIC_ICONS}/index.html`, renderShell(shellOpts), 'utf8');
+  console.log('Created root index.html');
+}

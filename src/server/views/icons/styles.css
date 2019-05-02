@@ -3,6 +3,18 @@ body {
   background: #eee;
 }
 
+.top-nav {
+  text-align: right;
+  padding: 0.5em;
+  background: #333;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.top-nav input {
+  padding: 0.25em 0.5em;
+}
+
 icon-cards {
   padding: 1em;
   display: grid;
@@ -136,6 +148,7 @@ panel {
   left: 0;
   right: 0;
   pointer-events: none;
+  z-index: 10;
 }
 
 panel-content {

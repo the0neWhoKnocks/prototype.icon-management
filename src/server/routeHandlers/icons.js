@@ -3,6 +3,7 @@ import { resolve } from 'path';
 import {
   PUBLIC_ICONS,
 } from 'ROOT/conf.app';
+import indexHtmlCheck from 'SERVER/utils/indexHtmlCheck';
 import iconsView from 'SERVER/views/icons';
 import shell from 'SERVER/views/shell';
 import handleError from './error';
@@ -36,9 +37,13 @@ export const renderShell = ({ iconsDir, res, version }) => {
 
 export default ({ matches, res }) => {
   const version = matches[1];
-  res.end(renderShell({
-    res,
-    iconsDir: PUBLIC_ICONS,
-    version,
-  }));
+  const path = (!version) ? PUBLIC_ICONS : `${ PUBLIC_ICONS }/${ version }`;
+  
+  if( !indexHtmlCheck({ path, res }) ){
+    res.end(renderShell({
+      res,
+      iconsDir: PUBLIC_ICONS,
+      version,
+    }));
+  }
 };
