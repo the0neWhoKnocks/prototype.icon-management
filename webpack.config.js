@@ -79,6 +79,7 @@ const conf = {
     new webpack.DefinePlugin({
       'process.env.ON_CLIENT': true,
       'process.env.PORT': process.env.PORT,
+      'process.env.PROD_BUCKET': process.env.PROD_BUCKET,
     }),
     /**
      * Provides build progress in the CLI
