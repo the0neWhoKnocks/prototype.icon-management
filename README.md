@@ -7,31 +7,39 @@ A proposal for how to manage static assets.
   - Build times for icon manifests are optimized to reuse what came before it
   and only account for new/updated items.
 
+You can view the [demo in action here](https://the0newhoknocks.github.io/prototype.icon-management/).
+
+Versioned Icons:
+- [v1.0.0](https://the0newhoknocks.github.io/prototype.icon-management/icons/v1.0.0/)
+- [v1.0.1](https://the0newhoknocks.github.io/prototype.icon-management/icons/v1.0.1/)
+- [v1.1.0](https://the0newhoknocks.github.io/prototype.icon-management/icons/v1.1.0/)
+
 ---
 
 ## Proposed Structure
 
 ```sh
-.
-├─ modules/
-│  └─ @org/
-│     ├─ org-icons/
-│     └─ org-react-icons/
-│
-└─ server/
-   └─ public/
-      └─ icons/
-         ├─ v1.0.0/
-         │  ├─ ... icons
-         │  └─ manifest.json
-         ├─ v1.0.1/
-         │  ├─ ... icons
-         │  └─ manifest.json
-         ├─ v1.1.0/
-         │  ├─ ... icons
-         │  └─ manifest.json
-         └─ manifest.json
+modules/
+└─ @org/
+   ├─ org-icons/
+   └─ org-react-icons/
 
+server/
+└─ icons/
+   ├─ v1.0.0/
+   │  ├─ ... icons
+   │  ├─ index.html
+   │  └─ manifest.json
+   ├─ v1.0.1/
+   │  ├─ ... icons
+   │  ├─ index.html
+   │  └─ manifest.json
+   ├─ v1.1.0/
+   │  ├─ ... icons
+   │  ├─ index.html
+   │  └─ manifest.json
+   ├─ index.html
+   └─ manifest.json
 ```
 
 ### Modules
@@ -72,6 +80,8 @@ Icons will be versioned via folders.
 
 ## View Example
 
+This will start up the server with all static assets built. 
+
 ```sh
 # Install all deps
 npm i
@@ -83,6 +93,8 @@ npm run start
 ---
 
 ## Development
+
+This will start up the server up in watch mode, allowing for changes on the fly.
 
 ```sh
 # Install all deps

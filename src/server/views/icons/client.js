@@ -53,7 +53,7 @@ const addListeners = () => {
               title: 'img',
               content:
                 '<p>Standard img request format.</p>'
-                + `<code class="html">&lt;img src="${ src }" /&gt;</code>`
+                + `<code class="html">&lt;img src="${ window.location.origin }${ src }" /&gt;</code>`
               ,
             }),
             tab({

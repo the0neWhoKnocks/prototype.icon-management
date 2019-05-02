@@ -38,13 +38,11 @@ export default ({ res }) => {
   Promise.all([manifestPromise, iconsPromise])
     .then(([bundleScripts, icons]) => {
       res.end(shell({
+        // NOTE - These params exist in `webpack.config.js` and may have to be updated.
         bundleScripts: [
           ...Object.keys(bundleScripts).map(
             (key) => `${ relativeJS }/${ bundleScripts[key] }`
           ),
-          // API has to load after hydration, otherwise it may not always get
-          // bound to the correct DOM element.
-          'https://www.youtube.com/iframe_api',
         ],
         icons: iconsToSymbols(icons),
         res,

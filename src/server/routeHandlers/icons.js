@@ -7,16 +7,14 @@ import iconsView from 'SERVER/views/icons';
 import shell from 'SERVER/views/shell';
 import handleError from './error';
 
-export default ({ matches, res }) => {
-  const version = matches[1];
+export const renderShell = ({ iconsDir, res, version }) => {
   const manifest = (!version)
-    ? require(`${PUBLIC_ICONS}/manifest.json`)
-    : require(`${PUBLIC_ICONS}/${version}/manifest.json`);
+    ? require(`${iconsDir}/manifest.json`)
+    : require(`${iconsDir}/${version}/manifest.json`);
   const styles = readFileSync(resolve(__dirname, 'SERVER/views/icons/styles.css'), 'utf8');
   const clientJS = readFileSync(resolve(__dirname, 'SERVER/views/icons/client.js'), 'utf8');
   
-  res.end(shell({
-    res,
+  const shellOpts = {
     rootContent: iconsView({ manifest }),
     scripts: {
       head: [
@@ -31,5 +29,16 @@ export default ({ matches, res }) => {
       { style: styles },
     ],
     title: 'Icons',
+  };
+  
+  return shell(shellOpts);
+};
+
+export default ({ matches, res }) => {
+  const version = matches[1];
+  res.end(renderShell({
+    res,
+    iconsDir: PUBLIC_ICONS,
+    version,
   }));
 };

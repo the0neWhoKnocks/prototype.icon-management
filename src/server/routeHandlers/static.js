@@ -6,6 +6,7 @@ import handleError from './error';
 const mimeTypes = {
   '.css': 'text/css',
   '.eot': 'appliaction/vnd.ms-fontobject',
+  '.html': 'text/html',
   '.ico': 'image/x-icon',
   '.jpg': 'image/jpeg',
   '.js': 'text/javascript',
@@ -35,7 +36,10 @@ export default (opts, cleanPath) => {
         const ext = parse(file).ext;
         // if the file is found, set Content-type and send data
         res.setHeader('Content-type', mimeTypes[ext] || 'text/plain');
-        res.setHeader('Access-Control-Allow-Origin', '*')
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        
+        if(ext === '.html') res.setHeader('Content-Length', data.length);
+        
         res.end(data);
       }
     });
