@@ -7,8 +7,8 @@ import {
   PUBLIC_MANIFEST,
   PUBLIC_VENDOR,
 } from 'ROOT/conf.app';
-import getEnv from 'SERVER/utils/getEnv';
 import shell from 'SERVER/views/shell';
+import getEnv from 'UTILS/getEnv';
 import handleError from './error';
 
 const isProd = getEnv() === 'prod';
