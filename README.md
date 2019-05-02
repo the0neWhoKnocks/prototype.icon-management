@@ -8,6 +8,7 @@ A proposal for how to manage static assets.
   and only account for new/updated items.
 
 You can view the [demo in action here](https://the0newhoknocks.github.io/prototype.icon-management/).
+
 Versioned Icons:
 - [v1.0.0](https://the0newhoknocks.github.io/prototype.icon-management/icons/v1.0.0/)
 - [v1.0.1](https://the0newhoknocks.github.io/prototype.icon-management/icons/v1.0.1/)
