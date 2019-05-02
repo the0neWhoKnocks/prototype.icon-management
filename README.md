@@ -7,6 +7,8 @@ A proposal for how to manage static assets.
   - Build times for icon manifests are optimized to reuse what came before it
   and only account for new/updated items.
 
+You can view the [demo in action here](https://the0newhoknocks.github.io/prototype.icon-management/).
+
 ---
 
 ## Proposed Structure

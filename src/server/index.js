@@ -61,7 +61,7 @@ const getExternalIP = () => {
         && iface.internal === false
         // Use the first `en` (ethernet) interface. Sometimes wireless which
         // should be `wl` shows up under `en`, so just roll with it :\
-        && /en\d+/i.test(ifname)
+        && /(en|eth)\d+/i.test(ifname)
       ) {
         ip = iface.address;
       }

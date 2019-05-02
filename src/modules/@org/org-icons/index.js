@@ -1,7 +1,6 @@
-import getPort from 'UTILS/getPort';
+import getIconsURL from 'UTILS/getIconsURL';
 
-// NOTE - URL would be hardcoded, but it's dynamic for this example.
-const ICONS_URL = `http://localhost:${ getPort() }/icons`;
+const ICONS_URL = getIconsURL();
 
 const manifestURL = (version = 'latest') => {
   const v = (version !== 'latest') ? `/${ version }` : '';
