@@ -1,0 +1,806 @@
+
+    <html>
+    <head>
+      <title>Icons</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <style>
+        *, *::before, *::after {
+          box-sizing: border-box;
+        }
+        html, body {
+          padding: 0;
+          margin: 0;
+        }
+        body {
+          font-family: Helvetica, Arial, sans-serif;
+          background: #eee;
+        }
+        body > noscript {
+          font-size: 1.2em;
+          font-weight: bold;
+          text-align: center;
+          padding: 1em;
+          background: #80003b;
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          z-index: 10;
+        }
+        body > noscript > div {
+          width: 80%;
+          color: #fff;
+          text-shadow: 0px 2px 2px #000;
+          display: inline-block;
+        }
+        code {
+          padding: 0.1em 0.5em;
+          border-radius: 0.25em;
+          margin-bottom: -1px;
+          background: #00000020;
+          display: inline-block;
+          vertical-align: top;
+        }
+        button {
+          cursor: pointer;
+        }
+        button:disabled {
+          cursor: default;
+        }
+      </style>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/railscasts.min.css">
+<style>body {
+  font-family: Helvetica, Arial, sans-serif;
+  background: #eee;
+}
+
+icon-cards {
+  padding: 1em;
+  display: grid;
+  box-sizing: border-box;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  column-gap: 12px;
+  row-gap: 12px;
+}
+
+icon-card {
+  position: relative;
+  display: flex;
+}
+
+card {
+  display: block;
+  background: #fff;
+  padding: 1em;
+  box-shadow: 0 2px 0.25em 0 rgba(0,0,0,0.25);
+  flex-grow: 1;
+}
+card button {
+  width: 100%;
+  padding: 0.5em;
+  margin-top: 0.5em;
+  border: solid 1px #aaa;
+  border-radius: 0.25em;
+  background: #fff;
+  cursor: pointer;
+}
+
+icon-wrapper {
+  white-space: nowrap;
+  display: block;
+}
+icon-wrapper * {
+  vertical-align: middle;
+}
+
+icon {
+  width: 2em;
+  height: 2em;
+  display: inline-block;
+}
+icon img {
+  width: 100%;
+}
+
+icon-text {
+  font-family: monospace;
+  white-space: nowrap;
+  display: inline-block;
+}
+
+tabs {
+  height: 100%;
+  font-size: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+tabs-row,
+tabs-content {
+  display: block;
+}
+
+tabs-row {
+  position: relative;
+  z-index: 1;
+}
+tabs-row * {
+  vertical-align: bottom;
+}
+
+tabs-content {
+  font-size: 1rem;
+  padding: 1em;
+  border: solid 1px #aaa;
+  position: relative;
+  white-space: pre;
+  overflow: auto;
+}
+tabs-content p {
+  margin: 0 0 1rem;
+}
+tabs-content code {
+  overflow: auto;
+}
+tabs-content h4 {
+  margin: 1em 0;
+  border-bottom: solid 1px #aaa;
+}
+tabs-content ul {
+  font-size: 0;
+  margin-bottom: 1rem;
+}
+tabs-content li {
+  font-size: 1rem;
+}
+
+tab {
+  font-size: 1rem;
+  display: inline-block;
+}
+
+tab-title {
+  padding: 0.45em 0.5em;
+  border: solid 1px #aaa;
+  border-bottom: none;
+  border-radius: 0.25em 0.25em 0 0;
+  background: linear-gradient(#eee 75%, #cecece);
+  display: block;
+  cursor: pointer;
+  user-select: none;
+}
+
+tab-content {
+  display: none;
+}
+
+tab.current tab-title {
+  padding: 0.5em 0.5em;
+  background: #eee;
+  transform: translateY(1px);
+}
+
+panel {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+}
+
+panel-content {
+  height: 100%;
+  display: block;
+}
+
+panel-body {
+  width: 100%;
+  height: 80vh;
+  background: #eee;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  transition: transform 200ms;
+  transform: translateY(100%);
+  pointer-events: all;
+  box-sizing: border-box;
+  padding: 1em;
+}
+panel-body nav {
+  text-align: right;
+}
+
+button[name="panel-mask"] {
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: block;
+  pointer-events: none;
+  transition: opacity 200ms;
+  opacity: 0;
+}
+
+panel.open panel-body {
+  transform: translateY(0%);
+}
+panel.open button[name="panel-mask"] {
+  pointer-events: all;
+  opacity: 1;
+}</style>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/languages/javascript.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/languages/xml.min.js"></script>
+<script type="text/javascript">//<![CDATA[
+              const els = {};
+
+const handleTabSelect = ({ tabsContentEl, tabEls }) => (tab) => {
+  const tabContentNodes = tab.querySelector('tab-content').childNodes;
+  const tabContent = [...tabContentNodes].map((node) => node.cloneNode(true));
+
+  // set current tab class
+  [...tabEls].forEach((el) => el.classList.remove('current'));
+  tab.classList.add('current');
+  // update content
+  tabsContentEl.innerHTML = '';
+  [...tabContent].forEach((el) => {
+    tabsContentEl.appendChild(el);
+    if(el.nodeName === 'CODE') hljs.highlightBlock(el);
+  });
+};
+
+const wireUpTabs = () => {
+  const tabs = els.panel.querySelectorAll('tabs');
+  
+  [...tabs].forEach((tabsEl, ndx) => {
+    const tabEls = tabsEl.querySelectorAll('tab');
+    const tabsRowEl = tabsEl.querySelector('tabs-row');
+    const tabsContentEl = tabsEl.querySelector('tabs-content');
+    const handler = handleTabSelect({ tabsContentEl, tabEls });
+
+    // Select the first tab on load
+    if(ndx === 0) handler(tabEls[0]);
+
+    tabsEl.addEventListener('click', (ev) => {
+      if(ev.target.nodeName === 'TAB-TITLE') handler(ev.target.parentNode);
+    });
+  });
+};
+
+const tab = ({ content, title }) => `
+  <tab>
+    <tab-title>${ title }</tab-title>
+    <tab-content>${ content }</tab-content>
+  </tab>
+`;
+
+const addListeners = () => {
+  document.body.addEventListener('click', (ev) => {
+    const el = ev.target;
+    
+    if(el.nodeName === 'BUTTON') {
+      switch(el.getAttribute('name')){
+        case 'usage': {
+          const { name, src } = el.dataset;
+          const tabs = [
+            tab({
+              title: 'img',
+              content:
+                '<p>Standard img request format.</p>'
+                + `<code class="html">&lt;img src="${ window.location.origin }${ src }" /&gt;</code>`
+              ,
+            }),
+            tab({
+              title: 'svg',
+              content:
+                '<p>This approach allows for customization of the icon since it adds a copy of the full SVG to the DOM.</p>'
+                + '<code class="js">'
+                + "import { Icon } from '@ORG/org-react-icon';"
+                + '\n'  
+                + '\nconst App = () => ('
+                + '\n  &lt;div&gt;'
+                + '\n    &lt;Icon' 
+                + `\n      name="${ name }"`
+                + '\n      title="Icon title"'
+                + '\n      desc="An icon description"'
+                + '\n    /&gt;'
+                + '\n  &lt;/div&gt;'
+                + '\n);'
+                + '\n</code>'
+              ,
+            }),
+            tab({
+              title: 'svg link',
+              content:
+                '<p>This approach has the same benefits of the svg usage, but also trims down Client requests.</p>'
+                + '<h4>Server</h4>'
+                + '<ul>'
+                + '  <li>Downloads and caches the icons on Server startup.</li>'
+                + '  <li>Passes icons to Shell</li>'
+                + '</ul>'
+                + '<code class="js">'
+                + "import { getIcons, iconsToSymbols } from '@ORG/org-icons';"
+                + '\n\n'
+                + '\n// Fetches and caches the specified icons'
+                + '\nconst iconsPromise = getIcons({'
+                + "\n  icons: ['cake', 'mood', 'mood_bad'],"
+                + "\n  version: 'v1.1.0',"
+                + '\n});'
+                + '\n\n'
+                + '\n// Once the icons have been fetched, pass them to your View'
+                + '\niconsPromise.then((icons) => {'
+                + '\n  renderShell({ icons });'
+                + '\n});'
+                + '</code>'
+                + '<h4>Shell</h4>'
+                + '<ul>'
+                + '  <li>Inlines the SVGs for link reference usage.</li>'
+                + '</ul>'
+                + '<code class="js">'
+                + 'const shell = ({ icons }) => \`'
+                + '\n  &lt;html&gt;'
+                + '\n    &lt;body&gt;'
+                + '\n      ${ icons }'
+                + '\n    &lt;/body&gt;'
+                + '\n  &lt;/html&gt;'
+                + '\n\`;'
+                + '</code>'
+                + '<h4>Client</h4>'
+                + '<ul>'
+                + '  <li>Uses a reference to one of the inlined SVGs</li>'
+                + '</ul>'
+                + '<code class="js">'
+                + "import { IconLink } from '@ORG/org-react-icon';"
+                + '\n'  
+                + '\nconst App = () => ('
+                + '\n  &lt;div&gt;'
+                + '\n    &lt;IconLink' 
+                + `\n      name="${ name }"`
+                + '\n      title="Icon title"'
+                + '\n      desc="An icon description"'
+                + '\n    /&gt;'
+                + '\n  &lt;/div&gt;'
+                + '\n);'
+                + '\n</code>'
+              ,
+            }),
+          ];
+          els.panelContent.innerHTML = `
+            <tabs>
+              <tabs-row>${ tabs.join('') }</tabs-row>
+              <tabs-content></tabs-content>
+            </tabs>
+          `;
+          wireUpTabs();
+          els.panel.classList.toggle('open');
+          break;
+        }
+
+        case 'panel-close':
+        case 'panel-mask':
+          els.panel.classList.toggle('open');
+          break;
+      }
+    }
+  });
+};
+
+window.addEventListener('DOMContentLoaded', () => {
+  els.panel = document.querySelector('panel');
+  els.panelContent = document.querySelector('panel-content');
+  els.panelMask = document.querySelector('panel-mask');
+  
+  addListeners();
+});
+            //]]></script>
+    </head>
+    <body>
+      
+      
+      <div id="root">
+    <icon-cards>
+      <icon-card>
+        <card>
+          <icon-wrapper>
+            <icon><img src="/prototype.icon-management/icons/v1.0.0/cake.svg" /></icon>
+            <icon-text>cake</icon-text>
+          </icon-wrapper>
+          <button
+            name="usage"
+            data-name="cake"
+            data-src="/prototype.icon-management/icons/v1.0.0/cake.svg"
+          >Usage</button>
+        </card>
+      </icon-card>
+    
+      <icon-card>
+        <card>
+          <icon-wrapper>
+            <icon><img src="/prototype.icon-management/icons/v1.0.0/domain.svg" /></icon>
+            <icon-text>domain</icon-text>
+          </icon-wrapper>
+          <button
+            name="usage"
+            data-name="domain"
+            data-src="/prototype.icon-management/icons/v1.0.0/domain.svg"
+          >Usage</button>
+        </card>
+      </icon-card>
+    
+      <icon-card>
+        <card>
+          <icon-wrapper>
+            <icon><img src="/prototype.icon-management/icons/v1.0.0/group_add.svg" /></icon>
+            <icon-text>group_add</icon-text>
+          </icon-wrapper>
+          <button
+            name="usage"
+            data-name="group_add"
+            data-src="/prototype.icon-management/icons/v1.0.0/group_add.svg"
+          >Usage</button>
+        </card>
+      </icon-card>
+    
+      <icon-card>
+        <card>
+          <icon-wrapper>
+            <icon><img src="/prototype.icon-management/icons/v1.0.0/location_city.svg" /></icon>
+            <icon-text>location_city</icon-text>
+          </icon-wrapper>
+          <button
+            name="usage"
+            data-name="location_city"
+            data-src="/prototype.icon-management/icons/v1.0.0/location_city.svg"
+          >Usage</button>
+        </card>
+      </icon-card>
+    
+      <icon-card>
+        <card>
+          <icon-wrapper>
+            <icon><img src="/prototype.icon-management/icons/v1.0.0/mood.svg" /></icon>
+            <icon-text>mood</icon-text>
+          </icon-wrapper>
+          <button
+            name="usage"
+            data-name="mood"
+            data-src="/prototype.icon-management/icons/v1.0.0/mood.svg"
+          >Usage</button>
+        </card>
+      </icon-card>
+    
+      <icon-card>
+        <card>
+          <icon-wrapper>
+            <icon><img src="/prototype.icon-management/icons/v1.0.0/mood_bad.svg" /></icon>
+            <icon-text>mood_bad</icon-text>
+          </icon-wrapper>
+          <button
+            name="usage"
+            data-name="mood_bad"
+            data-src="/prototype.icon-management/icons/v1.0.0/mood_bad.svg"
+          >Usage</button>
+        </card>
+      </icon-card>
+    
+      <icon-card>
+        <card>
+          <icon-wrapper>
+            <icon><img src="/prototype.icon-management/icons/v1.0.0/notifications.svg" /></icon>
+            <icon-text>notifications</icon-text>
+          </icon-wrapper>
+          <button
+            name="usage"
+            data-name="notifications"
+            data-src="/prototype.icon-management/icons/v1.0.0/notifications.svg"
+          >Usage</button>
+        </card>
+      </icon-card>
+    
+      <icon-card>
+        <card>
+          <icon-wrapper>
+            <icon><img src="/prototype.icon-management/icons/v1.0.0/notifications_active.svg" /></icon>
+            <icon-text>notifications_active</icon-text>
+          </icon-wrapper>
+          <button
+            name="usage"
+            data-name="notifications_active"
+            data-src="/prototype.icon-management/icons/v1.0.0/notifications_active.svg"
+          >Usage</button>
+        </card>
+      </icon-card>
+    
+      <icon-card>
+        <card>
+          <icon-wrapper>
+            <icon><img src="/prototype.icon-management/icons/v1.0.0/notifications_none.svg" /></icon>
+            <icon-text>notifications_none</icon-text>
+          </icon-wrapper>
+          <button
+            name="usage"
+            data-name="notifications_none"
+            data-src="/prototype.icon-management/icons/v1.0.0/notifications_none.svg"
+          >Usage</button>
+        </card>
+      </icon-card>
+    
+      <icon-card>
+        <card>
+          <icon-wrapper>
+            <icon><img src="/prototype.icon-management/icons/v1.0.0/notifications_off.svg" /></icon>
+            <icon-text>notifications_off</icon-text>
+          </icon-wrapper>
+          <button
+            name="usage"
+            data-name="notifications_off"
+            data-src="/prototype.icon-management/icons/v1.0.0/notifications_off.svg"
+          >Usage</button>
+        </card>
+      </icon-card>
+    
+      <icon-card>
+        <card>
+          <icon-wrapper>
+            <icon><img src="/prototype.icon-management/icons/v1.0.0/notifications_paused.svg" /></icon>
+            <icon-text>notifications_paused</icon-text>
+          </icon-wrapper>
+          <button
+            name="usage"
+            data-name="notifications_paused"
+            data-src="/prototype.icon-management/icons/v1.0.0/notifications_paused.svg"
+          >Usage</button>
+        </card>
+      </icon-card>
+    
+      <icon-card>
+        <card>
+          <icon-wrapper>
+            <icon><img src="/prototype.icon-management/icons/v1.0.0/pages.svg" /></icon>
+            <icon-text>pages</icon-text>
+          </icon-wrapper>
+          <button
+            name="usage"
+            data-name="pages"
+            data-src="/prototype.icon-management/icons/v1.0.0/pages.svg"
+          >Usage</button>
+        </card>
+      </icon-card>
+    
+      <icon-card>
+        <card>
+          <icon-wrapper>
+            <icon><img src="/prototype.icon-management/icons/v1.0.0/party_mode.svg" /></icon>
+            <icon-text>party_mode</icon-text>
+          </icon-wrapper>
+          <button
+            name="usage"
+            data-name="party_mode"
+            data-src="/prototype.icon-management/icons/v1.0.0/party_mode.svg"
+          >Usage</button>
+        </card>
+      </icon-card>
+    
+      <icon-card>
+        <card>
+          <icon-wrapper>
+            <icon><img src="/prototype.icon-management/icons/v1.0.0/people.svg" /></icon>
+            <icon-text>people</icon-text>
+          </icon-wrapper>
+          <button
+            name="usage"
+            data-name="people"
+            data-src="/prototype.icon-management/icons/v1.0.0/people.svg"
+          >Usage</button>
+        </card>
+      </icon-card>
+    
+      <icon-card>
+        <card>
+          <icon-wrapper>
+            <icon><img src="/prototype.icon-management/icons/v1.0.0/people_outline.svg" /></icon>
+            <icon-text>people_outline</icon-text>
+          </icon-wrapper>
+          <button
+            name="usage"
+            data-name="people_outline"
+            data-src="/prototype.icon-management/icons/v1.0.0/people_outline.svg"
+          >Usage</button>
+        </card>
+      </icon-card>
+    
+      <icon-card>
+        <card>
+          <icon-wrapper>
+            <icon><img src="/prototype.icon-management/icons/v1.0.0/person.svg" /></icon>
+            <icon-text>person</icon-text>
+          </icon-wrapper>
+          <button
+            name="usage"
+            data-name="person"
+            data-src="/prototype.icon-management/icons/v1.0.0/person.svg"
+          >Usage</button>
+        </card>
+      </icon-card>
+    
+      <icon-card>
+        <card>
+          <icon-wrapper>
+            <icon><img src="/prototype.icon-management/icons/v1.0.0/person_add.svg" /></icon>
+            <icon-text>person_add</icon-text>
+          </icon-wrapper>
+          <button
+            name="usage"
+            data-name="person_add"
+            data-src="/prototype.icon-management/icons/v1.0.0/person_add.svg"
+          >Usage</button>
+        </card>
+      </icon-card>
+    
+      <icon-card>
+        <card>
+          <icon-wrapper>
+            <icon><img src="/prototype.icon-management/icons/v1.0.0/person_outline.svg" /></icon>
+            <icon-text>person_outline</icon-text>
+          </icon-wrapper>
+          <button
+            name="usage"
+            data-name="person_outline"
+            data-src="/prototype.icon-management/icons/v1.0.0/person_outline.svg"
+          >Usage</button>
+        </card>
+      </icon-card>
+    
+      <icon-card>
+        <card>
+          <icon-wrapper>
+            <icon><img src="/prototype.icon-management/icons/v1.0.0/plus_one.svg" /></icon>
+            <icon-text>plus_one</icon-text>
+          </icon-wrapper>
+          <button
+            name="usage"
+            data-name="plus_one"
+            data-src="/prototype.icon-management/icons/v1.0.0/plus_one.svg"
+          >Usage</button>
+        </card>
+      </icon-card>
+    
+      <icon-card>
+        <card>
+          <icon-wrapper>
+            <icon><img src="/prototype.icon-management/icons/v1.0.0/poll.svg" /></icon>
+            <icon-text>poll</icon-text>
+          </icon-wrapper>
+          <button
+            name="usage"
+            data-name="poll"
+            data-src="/prototype.icon-management/icons/v1.0.0/poll.svg"
+          >Usage</button>
+        </card>
+      </icon-card>
+    
+      <icon-card>
+        <card>
+          <icon-wrapper>
+            <icon><img src="/prototype.icon-management/icons/v1.0.0/public.svg" /></icon>
+            <icon-text>public</icon-text>
+          </icon-wrapper>
+          <button
+            name="usage"
+            data-name="public"
+            data-src="/prototype.icon-management/icons/v1.0.0/public.svg"
+          >Usage</button>
+        </card>
+      </icon-card>
+    
+      <icon-card>
+        <card>
+          <icon-wrapper>
+            <icon><img src="/prototype.icon-management/icons/v1.0.0/school.svg" /></icon>
+            <icon-text>school</icon-text>
+          </icon-wrapper>
+          <button
+            name="usage"
+            data-name="school"
+            data-src="/prototype.icon-management/icons/v1.0.0/school.svg"
+          >Usage</button>
+        </card>
+      </icon-card>
+    
+      <icon-card>
+        <card>
+          <icon-wrapper>
+            <icon><img src="/prototype.icon-management/icons/v1.0.0/sentiment_dissatisfied.svg" /></icon>
+            <icon-text>sentiment_dissatisfied</icon-text>
+          </icon-wrapper>
+          <button
+            name="usage"
+            data-name="sentiment_dissatisfied"
+            data-src="/prototype.icon-management/icons/v1.0.0/sentiment_dissatisfied.svg"
+          >Usage</button>
+        </card>
+      </icon-card>
+    
+      <icon-card>
+        <card>
+          <icon-wrapper>
+            <icon><img src="/prototype.icon-management/icons/v1.0.0/sentiment_neutral.svg" /></icon>
+            <icon-text>sentiment_neutral</icon-text>
+          </icon-wrapper>
+          <button
+            name="usage"
+            data-name="sentiment_neutral"
+            data-src="/prototype.icon-management/icons/v1.0.0/sentiment_neutral.svg"
+          >Usage</button>
+        </card>
+      </icon-card>
+    
+      <icon-card>
+        <card>
+          <icon-wrapper>
+            <icon><img src="/prototype.icon-management/icons/v1.0.0/sentiment_satisfied.svg" /></icon>
+            <icon-text>sentiment_satisfied</icon-text>
+          </icon-wrapper>
+          <button
+            name="usage"
+            data-name="sentiment_satisfied"
+            data-src="/prototype.icon-management/icons/v1.0.0/sentiment_satisfied.svg"
+          >Usage</button>
+        </card>
+      </icon-card>
+    
+      <icon-card>
+        <card>
+          <icon-wrapper>
+            <icon><img src="/prototype.icon-management/icons/v1.0.0/sentiment_very_satisfied.svg" /></icon>
+            <icon-text>sentiment_very_satisfied</icon-text>
+          </icon-wrapper>
+          <button
+            name="usage"
+            data-name="sentiment_very_satisfied"
+            data-src="/prototype.icon-management/icons/v1.0.0/sentiment_very_satisfied.svg"
+          >Usage</button>
+        </card>
+      </icon-card>
+    
+      <icon-card>
+        <card>
+          <icon-wrapper>
+            <icon><img src="/prototype.icon-management/icons/v1.0.0/share.svg" /></icon>
+            <icon-text>share</icon-text>
+          </icon-wrapper>
+          <button
+            name="usage"
+            data-name="share"
+            data-src="/prototype.icon-management/icons/v1.0.0/share.svg"
+          >Usage</button>
+        </card>
+      </icon-card>
+    
+      <icon-card>
+        <card>
+          <icon-wrapper>
+            <icon><img src="/prototype.icon-management/icons/v1.0.0/whatshot.svg" /></icon>
+            <icon-text>whatshot</icon-text>
+          </icon-wrapper>
+          <button
+            name="usage"
+            data-name="whatshot"
+            data-src="/prototype.icon-management/icons/v1.0.0/whatshot.svg"
+          >Usage</button>
+        </card>
+      </icon-card>
+    </icon-cards>
+    <panel>
+      <button name="panel-mask"></button>
+      <panel-body>
+        <nav><button name="panel-close">Close</button></nav>
+        <panel-content></panel-content>
+      </panel-body>
+    </panel>
+  </div>
+      
+    </body>
+    </html>
+  

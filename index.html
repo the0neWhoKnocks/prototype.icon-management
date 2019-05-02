@@ -1,0 +1,376 @@
+
+    <html>
+    <head>
+      <title>Root View</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <style>
+        *, *::before, *::after {
+          box-sizing: border-box;
+        }
+        html, body {
+          padding: 0;
+          margin: 0;
+        }
+        body {
+          font-family: Helvetica, Arial, sans-serif;
+          background: #eee;
+        }
+        body > noscript {
+          font-size: 1.2em;
+          font-weight: bold;
+          text-align: center;
+          padding: 1em;
+          background: #80003b;
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          z-index: 10;
+        }
+        body > noscript > div {
+          width: 80%;
+          color: #fff;
+          text-shadow: 0px 2px 2px #000;
+          display: inline-block;
+        }
+        code {
+          padding: 0.1em 0.5em;
+          border-radius: 0.25em;
+          margin-bottom: -1px;
+          background: #00000020;
+          display: inline-block;
+          vertical-align: top;
+        }
+        button {
+          cursor: pointer;
+        }
+        button:disabled {
+          cursor: default;
+        }
+      </style>
+      
+      <script type="text/javascript" src="js/vendor/react.production.min.js"></script>
+<script type="text/javascript" src="js/vendor/react-dom.production.min.js"></script>
+<script type="text/javascript">//<![CDATA[
+              const DOMURL = window.URL || window.webkitURL || window;
+const particles = [];
+const particleCount = 20;
+const halfPi = Math.PI / 180;
+const playerWidth = 560;
+const playerHeight = 315;
+let playing = false;
+let canvas, ctx, pS;
+
+const cakeIcon = new Image();
+const cakeURL = `${ window.location.origin }/icons/v1.0.0/cake.svg`;
+const smashedCakeSVG = `
+  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48">
+    <path fill="#fff" d="M45.25 47.625c0-1.035-1.315-1.875-2.938-1.875-.151 0-.296.015-.441.028 0-.01.003-.02.003-.029 0-.967-.729-1.751-1.626-1.751-.584 0-1.091.334-1.378.831-1.321-.57-2.867-.788-4.245-.593-.758.107-1.473.183-2.151.235.052-.141.089-.297.089-.474 0-.516-.252-.934-.563-.934s-.563.418-.563.934c0 .203.047.381.113.534-3.593.182-5.801-.296-5.801-.296l1.622-3.089-2.49-1.55s-2.026 2.402-2.892 3.277c-.694.701-2.604 1.643-6.232 1.924.073-.212.117-.44.117-.681 0-1.07-.784-1.938-1.75-1.938s-1.75.867-1.75 1.938c0 .269.049.523.138.756-2.544-.024-5.173.482-6.136 2.325-.107-.123-.238-.206-.387-.206-.345 0-.625.395-.625.882H45.21c.018-.081.04-.162.04-.248zM4.58 47.875c.018-.083.045-.161.045-.25 0-.621-.448-1.125-1-1.125s-1 .504-1 1.125c0 .089.027.167.045.25h1.91z"/>
+  </svg>
+`;
+const splatIcon = new Image();
+const splatSVG = new Blob([smashedCakeSVG], { type: 'image/svg+xml' });
+const splatURL = DOMURL.createObjectURL(splatSVG);
+
+function onYouTubeIframeAPIReady() {
+  let partying = false;
+  let timeCheck;
+  
+  const enableParty = () => {
+    partying = true;
+    document.body.classList.add('party-time');
+    pS.start();
+  };
+  
+  const disableParty = () => {
+    partying = false;
+    document.body.classList.remove('party-time');
+    pS.stop();
+  };
+  
+  const handleTimeChange = () => {
+    const time = player.getCurrentTime();
+    
+    if(
+      !partying
+      && (time > 99.5 && time < 108)
+      || (time > 115 && time < 118)
+      || (time > 123 && time < 130)
+      || (time > 153 && time < 156)
+    ) enableParty();
+    else if(
+      partying
+      && (time > 108 && time < 115)
+      || (time > 118 && time < 120)
+      || (time > 130 && time < 153)
+      || (time > 156)
+    ) disableParty();
+  };
+  
+  const player = new YT.Player('player', {
+    width: playerWidth,
+    height: playerHeight,
+    videoId: 'gAYL5H46QnQ',
+    playerVars: { start: 93 },
+    events: {
+      onStateChange: (ev) => {
+        switch(ev.data){
+          case YT.PlayerState.PLAYING:
+            clearInterval(timeCheck);
+            handleTimeChange();
+            timeCheck = setInterval(handleTimeChange, 10);
+            break;
+          
+          case YT.PlayerState.PAUSED:
+            disableParty();
+            clearInterval(timeCheck);
+            // console.log(player.getCurrentTime());
+            break;
+        }
+      }
+    }
+  });
+}
+
+const random = (min, max) => Math.floor(Math.random() * max) + min;
+
+function getRandomColor() {
+  let r = 0, g = 0, b = 0;
+  while (r < 100 && g < 100 && b < 100){
+    r = Math.floor(Math.random() * 256);
+    g = Math.floor(Math.random() * 256);
+    b = Math.floor(Math.random() * 256);
+  }
+
+  return `rgb(${r}, ${g}, ${b})`;
+}
+
+class Particle {
+  static spawn(inst) {
+    const { xMin, xMax, yMin, yMax } = inst.bounds();
+    inst.x = random(xMin, xMax);
+    inst.y = random(yMin, yMax);
+    inst.vx = random(5, -10);
+    inst.gravity = random(1, -12);
+    inst.rotation = random(1, 360);
+    inst.opacity = +((100 * Math.random()) / 100).toFixed(2);
+    inst.color = getRandomColor();
+    inst.splat = false;
+  }
+  
+  constructor({ bounds }) {
+    this.bounds = bounds;
+    this._canvas = document.createElement('canvas');
+    this._ctx = this._canvas.getContext('2d');
+    this._canvas.width = cakeIcon.width;
+    this._canvas.height = cakeIcon.height;
+    
+    Particle.spawn(this);
+    this.drawImg();
+  }
+  
+  drawImg() {
+    this._ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
+    this._ctx.save();
+    this._ctx.translate(this._canvas.width/2, this._canvas.height/2);
+    this._ctx.rotate( this.rotation * halfPi );
+    this._ctx.drawImage(cakeIcon, -(this._canvas.width/2), -(this._canvas.height/2));
+    this._ctx.translate(-(this._canvas.width/2), -(this._canvas.height/2));
+    this._ctx.globalAlpha = this.opacity;
+    this._ctx.globalCompositeOperation = 'source-atop';
+    this._ctx.fillStyle = this.color;
+    this._ctx.fillRect(0, 0, this._canvas.width, this._canvas.height);
+    this._ctx.restore();
+  }
+  
+  draw() {
+    this.drawImg();
+    ctx.drawImage(this._canvas, this.x, this.y);
+  }
+  
+  update() {
+    const inc = 5;
+    
+    this.x += this.vx;
+    this.y += this.gravity;
+    this.rotation = ((this.rotation + inc) > 360) ? 0 : this.rotation + inc;
+
+    if (this.x < 0 || this.x > canvas.width) this.vx = -this.vx;
+    if (this.y <= canvas.height - this._canvas.height) this.gravity += 0.25;
+    else this.splat = true;
+  }
+  
+  reset() {
+    Particle.spawn(this);
+  }
+}
+
+const loadIcons = new Promise((res, rej) => {
+  let loaded = 0;
+  const loadHandler = (url) => () => { 
+    DOMURL.revokeObjectURL(url);
+    loaded += 1;
+    if(loaded === 2) res();
+  };
+  cakeIcon.onload = loadHandler(cakeURL);
+  splatIcon.onload = loadHandler(splatURL);
+  
+  cakeIcon.src = cakeURL;
+  splatIcon.src = splatURL;
+});
+
+const handleResize = () => {
+  let resizeDebounce;
+  
+  return () => {
+    if(pS && pS.emitting) pS.stop();
+    clearTimeout(resizeDebounce);
+    resizeDebounce = setTimeout(() => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      if(pS && pS.emitting) pS.start();
+    }, 200);
+  };
+};
+
+class ParticleSystem {
+  constructor({
+    Particle,
+    count,
+    bounds,
+  }) {
+    this.particles = [];
+    this.splatted = [];
+    this.Particle = Particle;
+    this.emitting = false;
+    this.count = count;
+    this.bounds = bounds;
+    
+    this.emit = this.emit.bind(this);
+    
+    this.build();
+  }
+  
+  build() {
+    for(let i=0; i<this.count; i++){
+      this.particles.push(new this.Particle({ bounds: this.bounds }));
+    }
+  }
+  
+  start() {
+    if(!this.emitting){
+      this.emitting = true;
+      this.emit();
+    }
+  }
+  
+  stop() {
+    this.emitting = false;
+  }
+  
+  emit() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    for (let i=0; i<this.particles.length; i++) {
+      const particle = this.particles[i];
+      
+      if(!particle.splat){
+        particle.update();
+        particle.draw();
+      }
+      else {
+        const splat = {
+          canvas: document.createElement('canvas'),
+          scale: random(1, 10),
+          x: particle.x,
+          y: particle.y,
+        };
+        const factor = 1.5;
+        const width = splatIcon.width * factor;
+        const height = splatIcon.height * factor;
+        splat.ctx = splat.canvas.getContext('2d');
+        splat.canvas.width = width;
+        splat.canvas.height = height;
+        splat.ctx.scale(factor, factor);
+        splat.ctx.drawImage(splatIcon, 0, 0);
+        splat.ctx.globalAlpha = particle.opacity;
+        splat.ctx.globalCompositeOperation = 'source-atop';
+        splat.ctx.fillStyle = particle.color;
+        splat.ctx.fillRect(0, 0, width, height);
+        
+        this.splatted.push(splat);
+        
+        // limit count to save on memory
+        // TODO - paint the splats into another layer and don't keep track of
+        // all the individual splat data.
+        if(this.splatted.length > 100) this.splatted.shift();
+        
+        if(this.emitting) particle.reset();
+      }
+    }
+    
+    for(let i=0; i<this.splatted.length; i++){
+      const splat = this.splatted[i];
+      
+      ctx.drawImage(splat.canvas, splat.x, splat.y - splatIcon.height + 10);
+    }
+    
+    if(
+      this.emitting 
+      || !this.emitting && !this.allSplatted
+    ) requestAnimationFrame(this.emit);
+    
+    this.allSplatted = true;
+    for(let i=0; i<this.particles.length; i++){
+      if(!this.particles[i].splat){
+        this.allSplatted = false;
+        break;
+      }
+    }
+  }
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  canvas = document.getElementById('canvas');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  ctx = canvas.getContext('2d');
+  
+  loadIcons
+    .then(() => {
+      pS = new ParticleSystem({
+        Particle,
+        count: 10,
+        bounds: () => ({
+          xMin: canvas.width / 2 - playerWidth / 2,
+          xMax: playerWidth,
+          yMin: canvas.height / 2 - playerHeight / 2,
+          yMax: playerHeight,
+        }),
+      });
+      
+      window.addEventListener('resize', handleResize());
+    })
+    .catch(err => alert(err));
+});
+            //]]></script>
+    </head>
+    <body>
+      
+      <svg style="display:none; position:absolute" width="0" height="0">
+        <symbol id="org-icon_cake" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><path d="M24 12c2.21 0 4-1.79 4-4 0-.75-.21-1.46-.57-2.06L24 0l-3.43 5.94C20.21 6.54 20 7.25 20 8c0 2.21 1.79 4 4 4zm9.19 19.97l-2.15-2.15-2.16 2.15c-2.61 2.61-7.17 2.61-9.78 0l-2.15-2.15-2.16 2.15C13.5 33.28 11.77 34 9.92 34c-1.45 0-2.8-.46-3.92-1.23V42c0 1.1.9 2 2 2h32c1.1 0 2-.9 2-2v-9.23c-1.12.77-2.46 1.23-3.92 1.23-1.85 0-3.58-.72-4.89-2.03zM36 18H26v-4h-4v4H12c-3.31 0-6 2.69-6 6v3.08C6 29.24 7.76 31 9.92 31c1.05 0 2.03-.41 2.77-1.15l4.28-4.27 4.27 4.26c1.48 1.48 4.06 1.48 5.54 0l4.28-4.26 4.27 4.26c.74.74 1.72 1.15 2.77 1.15 2.16 0 3.92-1.76 3.92-3.92V24c-.02-3.31-2.71-6-6.02-6z"/></symbol>
+<symbol id="org-icon_mood" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><path d="M23.99 4C12.94 4 4 12.95 4 24s8.94 20 19.99 20C35.04 44 44 35.05 44 24S35.04 4 23.99 4zM24 40c-8.84 0-16-7.16-16-16S15.16 8 24 8s16 7.16 16 16-7.16 16-16 16zm7-18c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3zm-14 0c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3zm7 13c4.66 0 8.61-2.91 10.21-7H13.79c1.6 4.09 5.55 7 10.21 7z"/></symbol>
+<symbol id="org-icon_mood_bad" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><path d="M23.99 4C12.94 4 4 12.95 4 24s8.94 20 19.99 20S44 35.05 44 24 35.04 4 23.99 4zM24 40c-8.84 0-16-7.16-16-16S15.16 8 24 8s16 7.16 16 16-7.16 16-16 16zm7-18c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3zm-14 0c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3zm17.21 13c-1.6-4.09-5.55-7-10.21-7s-8.61 2.91-10.21 7"/></symbol>
+      </svg>
+    
+      <noscript>
+        <div>
+          You need to enable JavaScript to run this App.
+        </div>
+      </noscript>
+      <div id="root"></div>
+      
+    <script type="text/javascript" src="js/vendor_96e7f.js"></script><script type="text/javascript" src="js/app_c0459.js"></script></body>
+    </html>
+  
