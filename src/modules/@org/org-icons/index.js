@@ -142,11 +142,19 @@ else {
       .catch(err => rej(err));
   });
   
-  const iconsToSymbols = (svgs) => `
-    <svg style="display:none; position:absolute" width="0" height="0">
-      ${ Object.keys(svgs).map((name) => svgs[name].replace(/svg/g, `symbol id="org-icon_${name}"`)) }
-    </svg>
-  `;
+  const iconsToSymbols = (svgs) => {
+    const symbols = Object.keys(svgs).map((name) => {
+      return svgs[name]
+        .replace('<svg', `<symbol id="org-icon_${name}"`)
+        .replace('svg>', 'symbol>')
+    });
+    
+    return `
+      <svg style="display:none; position:absolute" width="0" height="0">
+        ${ symbols.join('\n') }
+      </svg>
+    `;
+  };
 
   module.exports.getIcons = getIcons;
   module.exports.iconsToSymbols = iconsToSymbols;

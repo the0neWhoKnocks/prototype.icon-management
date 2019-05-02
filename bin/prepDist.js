@@ -44,5 +44,3 @@ try {
   copyFileSync(filePath, output);
   console.log(`Copied vendor file to ➜ "${ output }"`);
 });
-
-// TODO - this isn't running consistently every time
