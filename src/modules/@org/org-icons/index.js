@@ -146,6 +146,7 @@ else {
       return svgs[name]
         .replace('<svg', `<symbol id="org-icon_${name}"`)
         .replace('svg>', 'symbol>')
+        .replace(/\s(?:width|height)="\d+"/g, '');
     });
     
     return `
