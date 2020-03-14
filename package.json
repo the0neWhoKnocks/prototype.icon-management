@@ -43,7 +43,7 @@
     "@noxx/babel-plugin-a2rp": "^1.0.0",
     "@noxx/eslint-config": "^1.0.7",
     "@noxx/webpack-tidy-plugin": "^2.0.2",
-    "acorn": "^6.1.1",
+    "acorn": "^6.4.1",
     "ajv": "^5.5.2",
     "babel-loader": "^8.0.5",
     "babel-plugin-emotion": "^10.0.7",
